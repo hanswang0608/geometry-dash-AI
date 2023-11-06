@@ -24,7 +24,7 @@ public class GameStateManager {
 	//store all gamestates in an arraylist, through which they can be switched to and updated
 	public GameStateManager() {
 		gameStates = new ArrayList<GameState>();
-		music = new AudioPlayer("/Music/level1music.mp3");
+		music = new AudioPlayer("/Music/level1music.wav");
 		currentState = MENUSTATE;
 		gameStates.add(new MenuState(this));
 		gameStates.add(new LevelSelectState(this));
