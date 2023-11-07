@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import GameState.LevelState;
 import Main.GamePanel;
 import TileMap.Tile;
 import TileMap.TileMap;
@@ -31,7 +32,7 @@ public abstract class GameObject {
 	//animation
 	protected Animation animation;
 	protected BufferedImage[] sprites;
-	
+
 	protected int gravity;
 	
 	public GameObject(TileMap tm) {

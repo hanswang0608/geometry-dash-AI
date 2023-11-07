@@ -39,6 +39,22 @@ public abstract class TileMap {
 	protected int colOffset;
 	protected int numRowsToDraw;
 	protected int numColsToDraw;
+
+	//static final values for different entities.
+	//This helps with creating the level, as I can just specify the entities here instead of initializing them 1 by 1 in the level state
+	//it also aligns them into the 32x32 grid
+	public static final int JO = 33;	//jump orb
+	public static final int BO = 34;	//blue orb
+	public static final int JP = 35;	//jump pad
+	public static final int FP = 36;	//gravity pad
+	public static final int NP = 37;	//normal gravity portal
+	public static final int GP = 38;	//reverse gravity portal
+	public static final int CP = 39;	//cube portal
+	public static final int SP = 40;	//ship portal
+	public static final int BP = 41;	//ball portal
+	public static final int WP = 42;	//wave portal
+	public static final int NH = 43;	//horizontal normal gravity portal
+	public static final int GH = 44;	//horizontal reverse gravity portal
 	
 	public TileMap(int tileSize) {
 		this.tileSize = tileSize;
