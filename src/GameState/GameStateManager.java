@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 public class GameStateManager {
 	private ArrayList<GameState> gameStates;
 	private int currentState;
-	private AudioPlayer music;
 
 	//static final values for the different states to be referred as
 	public static final int MENUSTATE = 0;
@@ -24,7 +23,6 @@ public class GameStateManager {
 	//store all gamestates in an arraylist, through which they can be switched to and updated
 	public GameStateManager() {
 		gameStates = new ArrayList<GameState>();
-		music = new AudioPlayer("/Music/level1music.wav");
 		currentState = MENUSTATE;
 		gameStates.add(new MenuState(this));
 		gameStates.add(new LevelSelectState(this));
@@ -36,26 +34,17 @@ public class GameStateManager {
 
 	//set to state
 	public void setState(int state) {
+		gameStates.get(currentState).stopMusic();
 		currentState = state;
-		if (currentState == WINSTATE) return;
-		if (currentState == LEVEL1STATE) {
-			music.resume();
-		}
-		else {
-			music.stop();
-		}
+		gameStates.get(currentState).resumeMusic();
 	}
 		
 	//set to and initialize state
 	public void beginState(int state) {
 		gameStates.get(state).init();
+		gameStates.get(currentState).stopMusic();
 		currentState = state;
-		if (currentState == LEVEL1STATE) {
-			music.play();
-		}
-		else {
-			music.stop();
-		}
+		gameStates.get(currentState).playMusic();
 	}
 
 	//update the currentState
@@ -67,8 +56,6 @@ public class GameStateManager {
 		gameStates.get(currentState).draw(g);
 	}
 	
-	public AudioPlayer getMusic() {return music;}
-
 	public void keyUpdate(boolean[] keys) {
 		if (currentState == LEVEL1STATE) {
 			if (keys[0]) {gameStates.get(currentState).keyPressed(KeyEvent.VK_UP);}

@@ -3,6 +3,7 @@ package GameState;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+import Audio.AudioPlayer;
 import Main.GamePanel;
 import TileMap.*;
 import java.awt.*;
@@ -24,6 +25,7 @@ public class Level1State extends GameState{
 	private ArrayList<Portal> portals;
 
 	public Level1State(GameStateManager gsm) {
+		this.music = new AudioPlayer("/Music/level1music.wav");
 		this.gsm = gsm;
 		init();
 	}
@@ -71,7 +73,7 @@ public class Level1State extends GameState{
 			deathTime = System.nanoTime();
 			pm.getPlayer().setDead(false);
 			running = false;
-			gsm.getMusic().stop();
+			music.stop();
 			pm.deathSound.play();
 			explosions.add(new Explosion(pm.getPlayer().getx(), pm.getPlayer().gety()));
 		}
@@ -172,7 +174,7 @@ public class Level1State extends GameState{
 		deathTime = -1;
 		setPlayer();
 		running = true;
-		gsm.getMusic().play();
+		music.play();
 		for (int i = 0; i < orbs.size(); i++) {
 			orbs.get(i).setActivated(false);
 		}

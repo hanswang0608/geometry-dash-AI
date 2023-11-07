@@ -47,8 +47,7 @@ public class LevelSelectState extends GameState{
 	
 	private void select() {
 		if (currentChoice == 0) {
-			gsm.getMusic().setZero();
-			gsm.setState(GameStateManager.LEVEL1STATE);
+			gsm.beginState(GameStateManager.LEVEL1STATE);
 		}
 	}
 	
