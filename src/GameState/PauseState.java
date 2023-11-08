@@ -14,7 +14,7 @@ public class PauseState extends GameState{
 	protected Color titleColor;
 	protected Font titleFont;
 	protected Font font;
-	
+
 	public PauseState(GameStateManager gsm) {
 		this.gsm = gsm;
 		titleColor = new Color(128, 0, 0);
@@ -44,10 +44,10 @@ public class PauseState extends GameState{
 	
 	private void select() {
 		if (currentChoice == 0) {
-			gsm.beginState(GameStateManager.LEVEL1STATE);
+			gsm.beginState(gsm.getLastState());
 		}
 		if (currentChoice == 1) {
-			gsm.setState(GameStateManager.LEVEL1STATE);
+			gsm.setState(gsm.getLastState());
 		}
 		if (currentChoice == 2) {
 			gsm.beginState(GameStateManager.MENUSTATE);
@@ -71,7 +71,7 @@ public class PauseState extends GameState{
 			}
 		}
 		if (k == KeyEvent.VK_ESCAPE) {
-			gsm.setState(GameStateManager.LEVEL1STATE);
+			gsm.setState(gsm.getLastState());
 		}
 	}
 	

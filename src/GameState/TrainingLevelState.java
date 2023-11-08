@@ -2,6 +2,7 @@ package GameState;
 
 import TileMap.Background;
 import TileMap.Level1Map;
+import TileMap.TrainingLevelMap;
 
 public class TrainingLevelState extends LevelState{
     public TrainingLevelState(GameStateManager gsm) {
@@ -9,7 +10,7 @@ public class TrainingLevelState extends LevelState{
 
         // load level specific resources
         this.bg = new Background("/Backgrounds/menu.jpg", 0);
-        this.tileMap = new Level1Map(32);
+        this.tileMap = new TrainingLevelMap(32);
 
         init();
     }
