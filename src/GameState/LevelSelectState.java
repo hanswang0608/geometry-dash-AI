@@ -8,7 +8,7 @@ import TileMap.Background;
 public class LevelSelectState extends GameState{
 	private Background bg;
 	private int currentChoice;
-	private String[] options = {"Final Battle", "Nothing Here", "Stop Looking"};
+	private String[] options = {"Final Battle", "Nothing Here", "Stop Looking", "Training"};
 	private Color titleColor;
 	private Font titleFont;
 	private Font font;
@@ -48,6 +48,8 @@ public class LevelSelectState extends GameState{
 	private void select() {
 		if (currentChoice == 0) {
 			gsm.beginState(GameStateManager.LEVEL1STATE);
+		} else if (currentChoice == 3) {
+			gsm.beginState(GameStateManager.TRAINING_LEVEL_STATE);
 		}
 	}
 	

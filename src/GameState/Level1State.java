@@ -7,18 +7,13 @@ import TileMap.Level1Map;
 //state used for the first level, Final Battle
 public class Level1State extends LevelState{
 	public Level1State(GameStateManager gsm) {
-		super();
-		this.gsm = gsm;
-		this.music = new AudioPlayer("/Music/level1music.wav");
-		init();
-	}
+		super(gsm);
 
-	public void init() {
-		//loading the level map from TileMap class
-		tileMap = new Level1Map(32);
-		super.init(tileMap);
-		
-		//load background
-		bg = new Background("/Backgrounds/lvl1bg.png", 0.1);
+		// load level specific resources
+		this.music = new AudioPlayer("/Music/level1music.wav");
+		this.bg = new Background("/Backgrounds/lvl1bg.png", 0.1);
+		this.tileMap = new Level1Map(32);
+
+		init();
 	}
 }

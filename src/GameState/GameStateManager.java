@@ -19,6 +19,7 @@ public class GameStateManager {
 	public static final int PAUSESTATE = 3;
 	public static final int WINSTATE = 4;
 	public static final int INSTRUCTIONSTATE = 5;
+	public static final int TRAINING_LEVEL_STATE = 6;
 
 	//store all gamestates in an arraylist, through which they can be switched to and updated
 	public GameStateManager() {
@@ -30,6 +31,7 @@ public class GameStateManager {
 		gameStates.add(new PauseState(this));
 		gameStates.add(new WinState(this));
 		gameStates.add(new InstructionState(this));
+		gameStates.add(new TrainingLevelState(this));
 	}
 
 	//set to state

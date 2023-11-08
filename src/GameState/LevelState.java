@@ -11,8 +11,8 @@ import TileMap.TileMap;
 
 public abstract class LevelState extends GameState{
 	protected PlayerManager pm;
-	protected TileMap tileMap;
 	protected Background bg;
+	protected TileMap tileMap;
 	protected float deathTime; 	//keeps track of time of death, to create a 1 second respawn delay
 	protected boolean running;	//determines if the player should be updated
 	
@@ -23,7 +23,9 @@ public abstract class LevelState extends GameState{
 	protected ArrayList<Portal> portals;
 	protected ArrayList<Explosion> explosions;
 
-    public LevelState() {
+    public LevelState(GameStateManager gsm) {
+        this.gsm = gsm;
+
         orbs = new ArrayList<Orb>();
 		pads = new ArrayList<Pad>();
 		gportals = new ArrayList<GravityPortal>();
@@ -31,7 +33,7 @@ public abstract class LevelState extends GameState{
 		explosions = new ArrayList<Explosion>();
     }
 
-    public void init(TileMap tileMap) {
+    public void init() {
         // initialize tilemap
         tileMap.loadTiles();
 		tileMap.loadMap();
@@ -62,7 +64,7 @@ public abstract class LevelState extends GameState{
 			deathTime = System.nanoTime();
 			pm.getPlayer().setDead(false);
 			running = false;
-			music.stop();
+			stopMusic();
 			pm.deathSound.play();
 			explosions.add(new Explosion(pm.getPlayer().getx(), pm.getPlayer().gety()));
 		}
@@ -187,7 +189,7 @@ public abstract class LevelState extends GameState{
 		deathTime = -1;
 		setPlayer();
 		running = true;
-		music.play();
+		playMusic();
 		for (int i = 0; i < orbs.size(); i++) {
 			orbs.get(i).setActivated(false);
 		}
