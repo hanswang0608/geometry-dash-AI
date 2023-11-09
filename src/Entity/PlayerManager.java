@@ -23,7 +23,7 @@ public class PlayerManager {
 
 	public PlayerManager(TileMap tm) {
 		players = new ArrayList<Player>();
-		deathSound = new AudioPlayer("/SFX/deathsound.wav");
+		deathSound = new AudioPlayer("/SFX/deathsound.mp3");
 		currentPlayer = CUBE;
 		players.add(new Cube(tm, this));
 		players.add(new Ship(tm, this));
