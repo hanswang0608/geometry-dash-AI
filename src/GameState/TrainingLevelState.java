@@ -11,7 +11,5 @@ public class TrainingLevelState extends LevelState{
         // load level specific resources
         this.bg = new Background("/Backgrounds/menu.jpg", 0);
         this.tileMap = new TrainingLevelMap(32);
-
-        init();
     }
 }

@@ -14,6 +14,5 @@ public class Level1State extends LevelState{
 		this.bg = new Background("/Backgrounds/lvl1bg.png", 0.1);
 		this.tileMap = new Level1Map(32);
 
-		init();
 	}
 }
