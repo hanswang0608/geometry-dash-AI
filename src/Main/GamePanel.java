@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.awt.event.*;
 
 @SuppressWarnings("serial")
-public class GamePanel extends JPanel implements Runnable, KeyListener{
+public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener {
 	//dimensions
 	public static final int WIDTH = 640;
 	public static final int HEIGHT = 448;
@@ -40,6 +40,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		if (thread == null) {
 			thread = new Thread(this);
 			addKeyListener(this);
+			addMouseListener(this);
 			thread.start();
 		}
 	}
@@ -117,10 +118,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		g2.dispose();
 	}
 	
-	public void keyTyped(KeyEvent key) {}
+	public void keyTyped(KeyEvent e) {} // unused
 	
-	public void keyPressed(KeyEvent key) {
-		int keyCode = key.getKeyCode();
+	public void keyPressed(KeyEvent e) {
+		int keyCode = e.getKeyCode();
 
 		gsm.keyPressed(keyCode);
 		
@@ -129,8 +130,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 	}
 	
-	public void keyReleased(KeyEvent key) {
-		int keyCode = key.getKeyCode();
+	public void keyReleased(KeyEvent e) {
+		int keyCode = e.getKeyCode();
 
 		gsm.keyReleased(keyCode);
 
@@ -138,4 +139,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 			keys[0] = false;
 		}
 	}
+
+	public void mousePressed(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) keys[0] = true;
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1) keys[0] = false;
+	}
+
+	/* unused mouse events */
+	public void mouseClicked(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {}
+
 }
