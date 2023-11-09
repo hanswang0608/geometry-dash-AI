@@ -61,7 +61,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		init();
 		
 		long lastTime = System.nanoTime();
-		double amountOfTicks = 60.0;
+		double amountOfTicks = 60;
 		int maxAmountOfFrames = 60;
 		double ns = 1000000000 / amountOfTicks;
 		double delta = 0;

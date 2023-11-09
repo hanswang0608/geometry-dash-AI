@@ -23,6 +23,8 @@ public abstract class LevelState extends GameState{
 	protected ArrayList<Portal> portals;
 	protected ArrayList<Explosion> explosions;
 
+	protected static final int respawnDelayMS = 1000;
+
     public LevelState(GameStateManager gsm) {
         this.gsm = gsm;
 
@@ -40,14 +42,14 @@ public abstract class LevelState extends GameState{
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 
-		// clear entities to reload them
+		// clear old entities
 		orbs.clear();
 		pads.clear();
 		gportals.clear();
 		portals.clear();
 		explosions.clear();
 
-        //scan the 2d array used to store the map for entities to be created
+        // create entities by scanning the level's tilemap
 		scanMap(tileMap.getMap());
 
         //initialize player settings
@@ -128,7 +130,7 @@ public abstract class LevelState extends GameState{
 		}
 		
 		//if it has been 1 second since dying, respawn the player
-		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > 1000) {
+		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelayMS) {
 			reset();
 		}
 	}
@@ -224,13 +226,13 @@ public abstract class LevelState extends GameState{
 					else if (rc == TileMap.JP) pads.add(new Pad(tileMap, i * tileSize + 16, j * tileSize + 28, Pad.JUMP));
 					else if (rc == TileMap.FP) pads.add(new Pad(tileMap, i * tileSize + 16, j * tileSize + 28, Pad.GRAVITY));
 					else if (rc == TileMap.NP) gportals.add(new GravityPortal(tileMap, i * tileSize + 16, j * tileSize + 16, GravityPortal.NORMAL));
-					else if (rc == TileMap.GP) gportals.add(new GravityPortal(tileMap, i * tileSize + 16, j * tileSize + 16, GravityPortal.REVERSE));
+					else if (rc == TileMap.GP) gportals.add(new GravityPortal(tileMap, i * tileSize + 16, j * tileSize + 16, GravityPortal.REVERSED));
 					else if (rc == TileMap.CP) portals.add(new Portal(tileMap, i * tileSize + 16, j * tileSize + 16, Portal.CUBE));
 					else if (rc == TileMap.SP) portals.add(new Portal(tileMap, i * tileSize + 16, j * tileSize + 16, Portal.SHIP));
 					else if (rc == TileMap.BP) portals.add(new Portal(tileMap, i * tileSize + 16, j * tileSize + 16, Portal.BALL));
 					else if (rc == TileMap.WP) portals.add(new Portal(tileMap, i * tileSize + 16, j * tileSize + 16, Portal.WAVE));
 					else if (rc == TileMap.NH) gportals.add(new GravityPortal(tileMap, i * tileSize + 16, j * tileSize + 16, GravityPortal.NORMALH));
-					else if (rc == TileMap.GH) gportals.add(new GravityPortal(tileMap, i * tileSize + 16, j * tileSize + 16, GravityPortal.REVERSEH));
+					else if (rc == TileMap.GH) gportals.add(new GravityPortal(tileMap, i * tileSize + 16, j * tileSize + 16, GravityPortal.REVERSEDH));
 				}
 			}
 		}

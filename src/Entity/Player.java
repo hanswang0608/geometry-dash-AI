@@ -247,7 +247,6 @@ public abstract class Player extends GameObject{
 	
 	//method to react to activating an orb
 	public void hitOrb(Orb orb) {
-		System.out.println("hit orb");
 		if (orb.getType() == Orb.JUMP) {
 			if (!(this instanceof Ship))dy = jumpSpeed * 1;
 			else dy = jumpSpeed;

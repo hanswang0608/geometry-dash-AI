@@ -11,13 +11,13 @@ import TileMap.TileMap;
 //Note: the player classes are never used directly in game, they are always interacting through player manager
 public class PlayerManager {
 	private ArrayList<Player> players;	//arraylist to store the player modes
-	private int currentPlayer;			//var to keep track of current player
+	private int currentPlayer;			//var to keep track of current player mode
 	public AudioPlayer deathSound;		//death sound effect
 
 	//static final int values for the differnet modes
 	public static final int CUBE = 0;
 	public static final int SHIP = 1;
-	public static final int UFO = 2;		//UFO is not actually implemented so it does nothing but I have to keep it because it is part of the sprites
+	public static final int UFO  = 2;		//UFO is not actually implemented so it does nothing but I have to keep it because it is part of the sprites
 	public static final int WAVE = 3;
 	public static final int BALL = 4;
 

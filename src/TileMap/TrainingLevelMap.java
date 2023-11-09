@@ -8,7 +8,7 @@ public class TrainingLevelMap extends TileMap{
 		super(tileSize);
 	}
 	
-	public void loadMap() {		
+	public void loadMap() {
 		//2d array to store the level data
 		map = new byte[][]{
             {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  },

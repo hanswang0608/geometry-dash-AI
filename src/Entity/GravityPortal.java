@@ -10,9 +10,9 @@ public class GravityPortal extends GameObject{
 	private int type;
 
 	public static final int NORMAL = 0;
-	public static final int REVERSE = 1;
+	public static final int REVERSED = 1;
 	public static final int NORMALH = 2;	//same as normal but horizontal
-	public static final int REVERSEH = 3;	//same as reverse but horizontal
+	public static final int REVERSEDH = 3;	//same as reversed but horizontal
 	
 	public GravityPortal(TileMap tm, int x, int y, int type) {
 		super(tm);
