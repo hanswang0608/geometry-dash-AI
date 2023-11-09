@@ -4,4 +4,4 @@ echo --- Cleaning
 rm -fr bin
 
 echo --- Compiling Java
-javac src/*/*.java -d bin
+javac -cp "src;Libs/*;Resources" src/*/*.java -d bin

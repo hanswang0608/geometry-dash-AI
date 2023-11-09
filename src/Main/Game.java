@@ -1,5 +1,6 @@
 package Main;
 import javax.swing.JFrame;
+import JavaNN.Network.NeuralNetwork;
 
 /**
  * Programmer: Hans Wang
@@ -14,6 +15,11 @@ import javax.swing.JFrame;
 public class Game {
 	public static final String APP_NAME = "GD Evolved";
 	public static void main(String[] args) {
+		try {
+			NeuralNetwork network = NeuralNetwork.loadFromFile("ai_models/XOR.model");
+			System.out.println(network.evaluate(new double[]{0,1})[0]);
+		} catch (Exception e) {}
+		
 		JFrame window = new JFrame(APP_NAME);
 		window.setContentPane(new GamePanel());
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

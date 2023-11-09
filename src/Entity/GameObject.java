@@ -4,9 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import GameState.LevelState;
-import Main.GamePanel;
-import TileMap.Tile;
 import TileMap.TileMap;
 
 //abstract parent class of most game objects used

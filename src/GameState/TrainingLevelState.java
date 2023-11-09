@@ -1,7 +1,6 @@
 package GameState;
 
 import TileMap.Background;
-import TileMap.Level1Map;
 import TileMap.TrainingLevelMap;
 
 public class TrainingLevelState extends LevelState{

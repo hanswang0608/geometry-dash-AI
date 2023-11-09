@@ -4,8 +4,6 @@ package GameState;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import Audio.AudioPlayer;
-
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 

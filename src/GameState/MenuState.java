@@ -2,7 +2,6 @@ package GameState;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-import Audio.AudioPlayer;
 import Main.Game;
 import TileMap.Background;
 

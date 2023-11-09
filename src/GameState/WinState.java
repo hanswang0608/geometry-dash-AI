@@ -5,8 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
-import Audio.AudioPlayer;
-
 //state used when the player beats the level
 public class WinState extends GameState{
 	protected int currentChoice;

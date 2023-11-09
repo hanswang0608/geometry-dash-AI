@@ -5,8 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
-import Audio.AudioPlayer;
-
 //state used when pausing the level
 public class PauseState extends GameState{
 	protected int currentChoice;
