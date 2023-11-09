@@ -207,6 +207,7 @@ public abstract class LevelState extends GameState{
     //this method scans the level map for entities and add them to arraylists already made
 	//check TileMap class for better understanding
 	protected void scanMap(byte[][] map) {
+        System.out.println("scanmap");
 		int tileSize = tileMap.getTileSize();
 		for (int i = 0; i < map[0].length; i++) {
 			for (int j = 0; j < map.length - 2; j++) {
