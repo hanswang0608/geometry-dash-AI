@@ -1,6 +1,8 @@
 package GameState;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+
+import Main.Game;
 import TileMap.Background;
 
 //state used to select the levels
@@ -39,7 +41,7 @@ public class LevelSelectState extends GameState{
 		
 		g.setColor(titleColor);
 		g.setFont(titleFont);
-		g.drawString("Polygonal Run", 180, 150);
+		g.drawString(Game.APP_NAME, 210, 150);
 		g.setFont(font);
 		g.setColor(Color.BLACK);
 		g.drawString(options[currentChoice], 275, 250);

@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import Audio.AudioPlayer;
+import Main.Game;
 import TileMap.Background;
 
 //state used for the main menu
@@ -41,7 +42,7 @@ public class MenuState extends GameState{
 		
 		g.setColor(titleColor);
 		g.setFont(titleFont);
-		g.drawString("Polygonal Run", 180, 150);
+		g.drawString(Game.APP_NAME, 210, 150);
 		for(int i = 0; i < options.length; i++) {
 			if (i == currentChoice) {
 				g.setFont(selectedFont);
