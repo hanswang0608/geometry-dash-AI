@@ -12,6 +12,8 @@ public class GameStateManager {
 	private int currentState;
 	private Stack<Integer> prevStates;
 
+	private int mode;
+
 	//static final values for the different states to be referred as
 	public static final int MENUSTATE = 0;
 	public static final int LEVELSELECTSTATE = 1;
@@ -21,11 +23,17 @@ public class GameStateManager {
 	public static final int INSTRUCTIONSTATE = 5;
 	public static final int TRAINING_LEVEL_STATE = 6;
 
+	// static final values for modes the game can be in
+	public static final int NORMAL_MODE = 0;	// player controlled game
+	public static final int TRAINING_MODE = 1;	// AI training 
+	public static final int AI_MODE = 2;		// AI playback
+
 	//store all gamestates in an arraylist, through which they can be switched to and updated
 	public GameStateManager() {
 		gameStates = new ArrayList<GameState>();
 		prevStates = new Stack<Integer>();
 		currentState = MENUSTATE;
+		mode = NORMAL_MODE;
 		gameStates.add(new MenuState(this));
 		gameStates.add(new LevelSelectState(this));
 		gameStates.add(new Level1State(this));
@@ -54,6 +62,14 @@ public class GameStateManager {
 
 	public int getLastState() {
 		return prevStates.pop();
+	}
+
+	public int getMode() { return this.mode; }
+	
+	public void setMode(int mode) { this.mode = mode; }
+
+	public void cycleMode() { 
+		mode = (mode + 1) % 3;
 	}
 
 	//update the currentState

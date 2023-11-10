@@ -3,17 +3,21 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import Main.Game;
+import Main.GamePanel;
 import TileMap.Background;
 
 //state used for the main menu
 public class MenuState extends GameState{
 	private Background bg;
 	private int currentChoice;
-	private String[] options = {"Play", "Instructions", "Quit"};
 	private Color titleColor;
 	private Font titleFont;
 	private Font font;
 	private Font selectedFont;
+	private Font modeFont;
+
+	private static final String[] options = {"Play", "Instructions", "Quit"};
+	private static final String[] modes = {"", "Training", "AI"};
 	
 	public MenuState(GameStateManager gsm) {
 		this.gsm = gsm;
@@ -24,6 +28,7 @@ public class MenuState extends GameState{
 			titleFont = new Font("Century Gothic", Font.BOLD, 42);
 			font = new Font("Arial", Font.PLAIN, 16);
 			selectedFont = new Font("Arial", Font.BOLD, 20);
+			modeFont = new Font("Calibri", Font.BOLD, 20);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -53,6 +58,10 @@ public class MenuState extends GameState{
 			}
 			g.drawString(options[i], 300, 250 + i * 30);
 		}
+
+		g.setColor(Color.DARK_GRAY);
+		g.setFont(modeFont);
+		g.drawString(modes[gsm.getMode()], 5, 20);
 	}
 	
 	private void select() {
@@ -82,6 +91,10 @@ public class MenuState extends GameState{
 			if (currentChoice > options.length - 1) {
 				currentChoice = 0;
 			}
+		}
+		if (k == KeyEvent.VK_T) {
+			gsm.cycleMode();
+			System.out.println(gsm.getMode());
 		}
 	}
 	
