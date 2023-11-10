@@ -27,6 +27,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	
 	//key value array
 	private boolean[] keys;
+
+	private final String[] modes = {"", "Training", "AI"};
+	private final Font modeFont = new Font("Calibri", Font.BOLD, 20);
 	
 	public GamePanel() {
 		super();
@@ -110,6 +113,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	
 	private void draw() {
 		gsm.draw(g);
+
+		g.setColor(Color.DARK_GRAY);
+		g.setFont(modeFont);
+		g.drawString(modes[gsm.getMode()], 5, 20);
 	}
 	
 	private void drawToScreen() {
