@@ -16,6 +16,10 @@ public class TrainingMode extends Mode{
 	protected boolean running;	//determines if the player should be updated
 
 	protected static final int respawnDelayMS = 0;
+	// protected static final int spawnX = 64;
+	protected static final int spawnX = 305;
+	protected static final int spawnY = 560;
+	
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
         this.gsm = gsm;
@@ -52,7 +56,8 @@ public class TrainingMode extends Mode{
 		setPlayer();
 		running = true;
 
-		
+		pm.getPlayer().setDX(0);
+		for (double d : getNetworkInputsRaw()) System.out.println(d);		
     }
 
     public void update() {
@@ -207,6 +212,24 @@ public class TrainingMode extends Mode{
     //creating and spawning the player
 	protected void setPlayer() {
 		pm = new PlayerManager(tileMap);
-		pm.getPlayer().setPosition(64, 560);
+		pm.getPlayer().setPosition(spawnX, spawnY);
+	}
+
+	private double[] getNetworkInputsRaw() {
+		int viewDistance = 10;
+		int tileSize = tileMap.getTileSize();
+		int playerFront = pm.getPlayer().getx() + pm.getPlayer().getCWidth()/2;
+		int nextColX = Math.ceilDiv(playerFront, tileSize) * tileSize;
+
+		double[] output = new double[viewDistance + 1]; // network can see 10 blocks in front
+		output[0] = nextColX - playerFront;
+		
+		byte[][] map = tileMap.getMap();
+		byte[] row = map[spawnY/32];
+		int col = (int)Math.ceil((double)playerFront / tileSize);
+		for (int i = 0; i+col < row.length && i < viewDistance; i++) {
+			output[i+1] = (double)row[i+col];
+		}
+		return output;
 	}
 }
