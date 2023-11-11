@@ -88,7 +88,6 @@ public class MenuState extends GameState{
 		}
 		if (k == KeyEvent.VK_T) {
 			gsm.cycleMode();
-			System.out.println(gsm.getMode());
 		}
 	}
 	

@@ -21,6 +21,7 @@ public class ModeManager {
         currentMode = 0;
         modes.add(new NormalMode(gsm, bg, tileMap, music));
         modes.add(new TrainingMode(gsm, bg, tileMap, music));
+        modes.add(new AIMode(gsm, bg, tileMap, music));
     }
 
     public void setMode(int mode) {

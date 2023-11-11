@@ -10,14 +10,16 @@ import Main.GamePanel;
 import TileMap.Background;
 import TileMap.TileMap;
 
-public class TrainingMode extends Mode{
+import JavaNN.Network.*;
+
+public class AIMode extends Mode{
 	protected PlayerManager pm;
 	protected float deathTime; 	//keeps track of time of death, to create a 1 second respawn delay
 	protected boolean running;	//determines if the player should be updated
 
-	protected static final int respawnDelayMS = 0;
+	protected static final int respawnDelayMS = 1000;
 
-    public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
+    public AIMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
         this.gsm = gsm;
 		this.bg = bg;
 		this.tileMap = tileMap;
@@ -28,6 +30,7 @@ public class TrainingMode extends Mode{
 		gportals = new ArrayList<GravityPortal>();
 		portals = new ArrayList<Portal>();
 		explosions = new ArrayList<Explosion>();
+
     }
 
     public void init() {
@@ -52,7 +55,10 @@ public class TrainingMode extends Mode{
 		setPlayer();
 		running = true;
 
-		
+		try {
+			NeuralNetwork network = NeuralNetwork.loadFromFile("ai_models/XOR.model");
+			System.out.println(network.evaluate(new double[]{1,0})[0]);
+		} catch (Exception e) {}
     }
 
     public void update() {
@@ -82,7 +88,7 @@ public class TrainingMode extends Mode{
 		else {
 			tileMap.setPosition(GamePanel.WIDTH / 2 - pm.getPlayer().getx());
 		}
-
+		
 		//update background
 		bg.setPosition(tileMap.getx(), tileMap.gety());
 
@@ -208,5 +214,6 @@ public class TrainingMode extends Mode{
 	protected void setPlayer() {
 		pm = new PlayerManager(tileMap);
 		pm.getPlayer().setPosition(64, 560);
+		pm.getPlayer().setDX(0);
 	}
 }
