@@ -46,4 +46,16 @@ public class ModeManager {
     public void keyReleased(int k) {
         modes.get(currentMode).keyReleased(k);
     }
+
+    public void playMusic() {
+        modes.get(currentMode).playMusic();
+    }
+
+    public void resumeMusic() {
+        modes.get(currentMode).resumeMusic();
+    }
+
+    public void stopMusic() {
+        modes.get(currentMode).stopMusic();
+    }
 }

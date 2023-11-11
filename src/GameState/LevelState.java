@@ -43,4 +43,19 @@ public abstract class LevelState extends GameState{
     public void keyReleased(int k) {
         mm.keyReleased(k);
     }
+    
+    @Override
+    public void playMusic() {
+        mm.playMusic();
+    }
+    
+    @Override
+    public void resumeMusic() {
+        mm.resumeMusic();
+    }
+    
+    @Override
+    public void stopMusic() {
+        mm.stopMusic();
+    }
 }
