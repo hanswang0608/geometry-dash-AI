@@ -47,7 +47,6 @@ public class WinState extends GameState{
 		}
 		if (currentChoice == 1) {
 			gsm.beginState(GameStateManager.MENUSTATE);
-			
 		}
 	}
 	
