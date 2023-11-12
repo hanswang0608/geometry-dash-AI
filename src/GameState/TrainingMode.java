@@ -28,8 +28,8 @@ public class TrainingMode extends Mode{
 	private static final int spawnX = 64;
 	private static final int spawnY = 560;
 
-	private static final int AI_VIEW_DISTANCE = 10;
-	private static final int populationSize = 10;
+	private static final int AI_VIEW_DISTANCE = 4;
+	private static final int populationSize = 30;
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
         this.gsm = gsm;
@@ -66,7 +66,7 @@ public class TrainingMode extends Mode{
         // create entities by scanning the level's tilemap
 		scanMap(tileMap.getMap());
 
-		population = new Population(10, new int[]{AI_VIEW_DISTANCE + 1, 6, 4, 1});
+		population = new Population(populationSize, new int[]{AI_VIEW_DISTANCE + 1, 6, 4, 1});
 
         //initialize player settings
 		players.clear();
@@ -89,7 +89,7 @@ public class TrainingMode extends Mode{
 
 		//if it has been 1 second since dying, respawn the player
 		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelayMS) {
-			population.selectParentsByRank(0);
+			population.selectParentsByRank(2);
 			population.crossoverPopulation();
 			population.mutatePopulation();
 			population.updatePopulation();
@@ -124,7 +124,7 @@ public class TrainingMode extends Mode{
 
 			// get jump input from neural network
 			double networkOutput = agent.act(getNetworkInputs(pm, true))[0];
-			boolean shouldJump = networkOutput >= 0.1;
+			boolean shouldJump = networkOutput >= 0.5;
 			if (shouldJump) {
 				startJumping(pm);
 			} else {
@@ -288,7 +288,7 @@ public class TrainingMode extends Mode{
 			pm.getPlayer().setDead(false);
 			pm.init();
 			pm.getPlayer().initValues();
-			pm.getPlayer().setPosition(spawnX-i*5, spawnY);
+			pm.getPlayer().setPosition(spawnX-i*2, spawnY);
 		}
 	}
 
