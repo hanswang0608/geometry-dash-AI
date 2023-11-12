@@ -1,5 +1,7 @@
 package GameState;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -20,12 +22,13 @@ public class TrainingMode extends Mode{
 	
 	private Population population;
 	private int numAlive;
+	private int generation;
 
 	private static final int respawnDelayMS = 0;
 	private static final int spawnX = 64;
 	private static final int spawnY = 560;
 
-	private static final int AI_VIEW_DISTANCE = 4;
+	private static final int AI_VIEW_DISTANCE = 10;
 	private static final int populationSize = 10;
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
@@ -45,6 +48,7 @@ public class TrainingMode extends Mode{
 		int networkInputSize = AI_VIEW_DISTANCE + 1;
 		population = new Population(10, new int[]{networkInputSize, 6, 4, 1});
 		numAlive = populationSize;
+		generation = 0;
     }
 
     public void init() {
@@ -73,6 +77,7 @@ public class TrainingMode extends Mode{
 		setPlayers();
 		running = true;
 		numAlive = populationSize;
+		generation = 0;
     }
 
     public void update() {
@@ -89,6 +94,7 @@ public class TrainingMode extends Mode{
 			population.mutatePopulation();
 			population.updatePopulation();
 			reset();
+			generation++;
 		}
 
 		for (int i = 0; i < populationSize; i++) {
@@ -213,6 +219,10 @@ public class TrainingMode extends Mode{
 			explosions.get(i).setMapPosition((int)tileMap.getx(), (int)tileMap.gety());
 			explosions.get(i).draw(g);
 		}
+
+		g.setColor(new Color(1, 1, 1, 0.5f));
+		g.setFont(new Font("Calibri", Font.BOLD, 20));
+		g.drawString("Gen " + generation, GamePanel.WIDTH/2-20, 20);
 		//Note: draw is set up to draw objects in order of appearance
 	}
 

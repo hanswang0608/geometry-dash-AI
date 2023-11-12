@@ -114,9 +114,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	private void draw() {
 		gsm.draw(g);
 
-		g.setColor(Color.DARK_GRAY);
+		// draw mode indicator overlay
+		g.setColor(new Color(1, 1, 1, 0.5f));
 		g.setFont(modeFont);
 		g.drawString(modes[gsm.getMode()], 5, 20);
+	
 	}
 	
 	private void drawToScreen() {
