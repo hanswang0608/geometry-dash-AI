@@ -30,7 +30,7 @@ public class TrainingMode extends Mode{
 	private static final double SPAWN_X = 64;
 	private static final double SPAWN_Y = 560;
 
-	private static final int AI_VIEW_DISTANCE = 1;
+	private static final int AI_VIEW_DISTANCE = 10;
 	private static final int POPULATION_SIZE = 30;
 	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 6, 4, 1};
 	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 720, 2880, 6000};
@@ -110,12 +110,6 @@ public class TrainingMode extends Mode{
 			}
 		}
 
-		double[] networkOutputs = new double[POPULATION_SIZE];
-		double[][] networkInputs = new double[POPULATION_SIZE][];
-		for (int i = 0; i < networkInputs.length; i++) {
-			networkInputs[i] = new double[2];
-		}
-
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			PlayerManager pm = players.get(i);
 			Player player = pm.getPlayer();
@@ -125,19 +119,19 @@ public class TrainingMode extends Mode{
 
 			//update player
 			if (running) pm.update();
+
+			// win condition
 			if(player.atEndOfLevel()) {
 				player.setMoving(false);
 				if (player.getDX() == 0) {
+					running = false;
 					gsm.setState(GameStateManager.WINSTATE);
 					agent.setFitness(player.getx());
 					if (Config.saveWinner) {
 						agent.getNetwork().saveToFile("ai_models/training-win.model", true);
 					}
-					System.out.println("gen " + generation);
+					System.out.println("Finished training on generation " + generation + ".");
 					GamePanel.numTicks = TRAINING_TICK_RATES[0];
-					System.out.println(agent.getChromosome());
-					System.out.println("agent: " + agent.getID() + " " + agent.getFitness());
-					System.out.println("mostfit: " + population.getMostFit().getID() + " " + population.getMostFit().getFitness());
 				}
 			}
 			
@@ -149,9 +143,8 @@ public class TrainingMode extends Mode{
 			}
 
 			// get jump input from neural network
-			networkInputs[i] = getNetworkInputs(pm, true);
-			double networkOutput = agent.act(networkInputs[i])[0];
-			networkOutputs[i] = networkOutput;
+			double[] networkInputs = getNetworkInputs(pm, true);
+			double networkOutput = agent.act(networkInputs)[0];
 			boolean shouldJump = networkOutput >= 0.98;
 			if (shouldJump) {
 				startJumping(pm);
@@ -206,13 +199,6 @@ public class TrainingMode extends Mode{
 		else {
 			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx());
 		}
-
-		System.out.print(getPlayerInFirst() + " " + players.get(getPlayerInFirst()).getPlayer().getx() + " " + (networkOutputs[getPlayerInFirst()] >= 0.98));
-		for (double d : networkInputs[getPlayerInFirst()]) {
-			System.out.print(" " + d + "|");
-		}
-		System.out.print(" " + networkOutputs[getPlayerInFirst()]);
-		System.out.println();
 		
 		//update explosion
 		for (int j = 0; j < explosions.size(); j++) {
@@ -293,13 +279,13 @@ public class TrainingMode extends Mode{
 			trainingSpeed--;
 			if (trainingSpeed < 0) trainingSpeed = 0;
 			GamePanel.numTicks = TRAINING_TICK_RATES[trainingSpeed];
-			System.out.println("tick rate: " + GamePanel.numTicks);
+			System.out.println("tick rate target: " + GamePanel.numTicks);
 		}
 		if (k == KeyEvent.VK_PERIOD) {
 			trainingSpeed++;
 			if (trainingSpeed > TRAINING_TICK_RATES.length-1) trainingSpeed = TRAINING_TICK_RATES.length-1;
 			GamePanel.numTicks = TRAINING_TICK_RATES[trainingSpeed];
-			System.out.println("tick rate: " + GamePanel.numTicks);
+			System.out.println("tick rate target: " + GamePanel.numTicks);
 		}
 	}
 
@@ -348,7 +334,7 @@ public class TrainingMode extends Mode{
 			pm.getPlayer().initValues();
 			pm.getPlayer().setPosition(spawnX, SPAWN_Y);
 			playerInd++;
-			// spawnX -= pm.getPlayer().getDX();
+			spawnX -= pm.getPlayer().getDX();
 		}
 	}
 

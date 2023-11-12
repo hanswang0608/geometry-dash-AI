@@ -62,8 +62,6 @@ public class AIMode extends Mode{
 
 		try {
 			network = NeuralNetwork.loadFromFile("ai_models/training-win.model");
-			Agent agent = new Agent(network);
-			System.out.println(agent.getChromosome());
 		} catch (IOException e) {}
     }
 
@@ -73,7 +71,6 @@ public class AIMode extends Mode{
 			gsm.beginState(GameStateManager.MENUSTATE);
 			return;
 		}
-
 		
 		//update player
 		if (running) pm.update();
@@ -103,12 +100,6 @@ public class AIMode extends Mode{
 		} else {
 			stopJumping(pm);
 		}
-		System.out.print(pm.getPlayer().getx() + " " + shouldJump);
-		for (double d : networkInputs) {
-			System.out.print(" " + d + "|");
-		}
-		System.out.print(" " + networkOutput);
-		System.out.println();
 
 		//locks the vertical movement of the screen for modes other than Cube
 		if (pm.getPlayer() instanceof Cube) {

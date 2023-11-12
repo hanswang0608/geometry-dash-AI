@@ -94,7 +94,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				// System.out.println("FPS: " + frames + "\tTicks: " + ticks);
+				System.out.println("Ticks: " + ticks + "   \tFPS: " + frames);
 				frames = 0;
 				ticks = 0;
 			}
