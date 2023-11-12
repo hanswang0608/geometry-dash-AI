@@ -24,7 +24,7 @@ public class TrainingMode extends Mode{
 	private int numAlive;
 	private int generation;
 
-	private static final int respawnDelayMS = 0;
+	private static final int respawnDelayMS = 250;
 	private static final int spawnX = 64;
 	private static final int spawnY = 560;
 
@@ -81,7 +81,7 @@ public class TrainingMode extends Mode{
     }
 
     public void update() {
-		if (numAlive == 0) {
+		if (numAlive == 0 && running) {
 			deathTime = System.nanoTime();
 			running = false;
 			stopMusic();
@@ -205,7 +205,9 @@ public class TrainingMode extends Mode{
 		
 		if (running) {
 			for (int i = players.size()-1; i >= 0; i--) {
-				players.get(i).draw(g);	// draw the players in reverse order so the one in  front is on top
+				if (!players.get(i).getPlayer().isDead()) {
+					players.get(i).draw(g);	// draw the players in reverse order so the one in  front is on top
+				}
 			}
 		}
 		
