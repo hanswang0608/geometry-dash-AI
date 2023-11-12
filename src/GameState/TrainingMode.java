@@ -32,8 +32,8 @@ public class TrainingMode extends Mode{
 
 	private static final int AI_VIEW_DISTANCE = 4;
 	private static final int POPULATION_SIZE = 30;
-	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 6, 4, 1};
-	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 720, 2880, 8640};
+	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 100, 100, 100, 1};
+	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 720, 2880, 6000};
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
         this.gsm = gsm;
@@ -126,6 +126,7 @@ public class TrainingMode extends Mode{
 					if (Config.saveWinner) {
 						population.getMostFit().getNetwork().saveToFile("ai_models/training-win.model", true);
 					}
+					System.out.println("gen " + generation);
 				}
 			}
 			

@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	private Thread thread;
 	private boolean running;
 	private static int frames;
+	private static int ticks;
 		
 	//image
 	private BufferedImage image;
@@ -62,6 +63,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		keys = new boolean[1];
 		
 		frames = 0;
+		ticks = 0;
 	}
 	
 	//game loop
@@ -81,6 +83,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				update();
 				delta--;
 				framesPerTick = 0;
+				ticks++;
 			}
 			if (running && framesPerTick < (double)MAX_NUM_FRAMES/NUM_TICKS) {
 				draw();
@@ -92,7 +95,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
 				System.out.println("FPS: " + frames);
+				System.out.println("Ticks: " + ticks);
 				frames = 0;
+				ticks = 0;
 			}
 		}
 		stop();
