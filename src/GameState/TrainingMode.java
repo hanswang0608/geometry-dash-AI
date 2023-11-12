@@ -15,10 +15,11 @@ import JavaNN.Training.*;
 
 public class TrainingMode extends Mode{
 	private ArrayList<PlayerManager> players;
-	private float deathTime; 	//keeps track of time of death, to create a 1 second respawn delay
+	private double deathTime; 	//keeps track of time of death, to create a 1 second respawn delay
 	private boolean running;	//determines if the player should be updated
-
+	
 	private Population population;
+	private int numAlive;
 
 	private static final int respawnDelayMS = 0;
 	private static final int spawnX = 64;
@@ -34,9 +35,6 @@ public class TrainingMode extends Mode{
 		this.music = music;
 
 		players = new ArrayList<PlayerManager>();
-		for (int i = 0; i < populationSize; i++) {
-			players.add(new PlayerManager(tileMap));
-		}
 
         orbs = new ArrayList<Orb>();
 		pads = new ArrayList<Pad>();
@@ -45,7 +43,8 @@ public class TrainingMode extends Mode{
 		explosions = new ArrayList<Explosion>();
 
 		int networkInputSize = AI_VIEW_DISTANCE + 1;
-		// population = new Population(10, new int[]{networkInputSize, 6, 4, 1});
+		population = new Population(10, new int[]{networkInputSize, 6, 4, 1});
+		numAlive = populationSize;
     }
 
     public void init() {
@@ -66,14 +65,33 @@ public class TrainingMode extends Mode{
 		scanMap(tileMap.getMap());
 
         //initialize player settings
+		players.clear();
+		for (int i = 0; i < populationSize; i++) {
+			players.add(new PlayerManager(tileMap));
+		}
 		deathTime = -1;
 		setPlayers();
 		running = true;
+		numAlive = populationSize;
     }
 
     public void update() {
-		for (PlayerManager pm : players) {
+		if (numAlive == 0) {
+			deathTime = System.nanoTime();
+			running = false;
+			stopMusic();
+		}
+
+		//if it has been 1 second since dying, respawn the player
+		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelayMS) {
+			reset();
+		}
+
+		for (int i = 0; i < populationSize; i++) {
+			PlayerManager pm = players.get(i);
 			Player player = pm.getPlayer();
+
+			if (player.isDead()) continue;
 
 			//update player
 			if (running) pm.update();
@@ -85,42 +103,30 @@ public class TrainingMode extends Mode{
 			}
 			
 			if(player.isDead()) {
-				deathTime = System.nanoTime();
-				player.setDead(false);
-				running = false;
-				stopMusic();
-				pm.deathSound.play();
 				explosions.add(new Explosion(player.getx(), player.gety()));
-			}
-	
-			//locks the vertical movement of the screen for modes other than Cube
-			if (player instanceof Cube) {
-				tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety()); 
-			}
-			else {
-				tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx());
+				numAlive--;
 			}
 	
 			//update background
 			bg.setPosition(tileMap.getx(), tileMap.gety());
 	
 			//update entities
-			for (int i = 0; i < orbs.size(); i++) {
-				if (player.intersects(orbs.get(i)) && player.getJumping() && player.isFirstJump() && !orbs.get(i).getActivatedOnce()) {
-					player.hitOrb(orbs.get(i));
+			for (int j = 0; j < orbs.size(); j++) {
+				if (player.intersects(orbs.get(j)) && player.getJumping() && player.isFirstJump() && !orbs.get(j).getActivatedOnce()) {
+					player.hitOrb(orbs.get(j));
 				}
-				orbs.get(i).update();
+				orbs.get(j).update();
 			}
 			
-			for (int i = 0; i < pads.size(); i++) {
-				if (player.intersects(pads.get(i)) && !pads.get(i).getActivatedOnce()) {
-					player.hitPad(pads.get(i));
+			for (int j = 0; j < pads.size(); j++) {
+				if (player.intersects(pads.get(j)) && !pads.get(j).getActivatedOnce()) {
+					player.hitPad(pads.get(j));
 				}
 			}
 			
-			for (int i = 0; i < gportals.size(); i++) {
-				if (player.intersects(gportals.get(i))) {
-					if (gportals.get(i).getType() == GravityPortal.NORMAL || gportals.get(i).getType() == GravityPortal.NORMALH) {
+			for (int j = 0; j < gportals.size(); j++) {
+				if (player.intersects(gportals.get(j))) {
+					if (gportals.get(j).getType() == GravityPortal.NORMAL || gportals.get(j).getType() == GravityPortal.NORMALH) {
 						if (player.getGravity() != 1) player.flipGravity();
 					}
 					else {
@@ -129,26 +135,30 @@ public class TrainingMode extends Mode{
 				}
 			}
 			
-			for (int i = 0; i < portals.size(); i++) {
-				if (player.intersects(portals.get(i))) {
-					if(portals.get(i).getType() == Portal.CUBE) pm.setPlayer(Portal.CUBE);
-					else if(portals.get(i).getType() == Portal.SHIP) pm.setPlayer(Portal.SHIP);
-					else if(portals.get(i).getType() == Portal.BALL) pm.setPlayer(Portal.BALL);
-					else if(portals.get(i).getType() == Portal.WAVE) pm.setPlayer(Portal.WAVE);
+			for (int j = 0; j < portals.size(); j++) {
+				if (player.intersects(portals.get(j))) {
+					if(portals.get(j).getType() == Portal.CUBE) pm.setPlayer(Portal.CUBE);
+					else if(portals.get(j).getType() == Portal.SHIP) pm.setPlayer(Portal.SHIP);
+					else if(portals.get(j).getType() == Portal.BALL) pm.setPlayer(Portal.BALL);
+					else if(portals.get(j).getType() == Portal.WAVE) pm.setPlayer(Portal.WAVE);
 				}
 			}
 		}
 
-		
-		//update explosion
-		for (int i = 0; i < explosions.size(); i++) {
-			explosions.get(i).update();
-			if (explosions.get(i).shouldRemove()) explosions.remove(i);
+		//locks the vertical movement of the screen for modes other than Cube
+		// lock camera movement to the player furthest ahead
+		Player player = getPlayerInFirst().getPlayer();
+		if (player instanceof Cube) {
+			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety()); 
+		}
+		else {
+			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx());
 		}
 		
-		//if it has been 1 second since dying, respawn the player
-		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelayMS) {
-			reset();
+		//update explosion
+		for (int j = 0; j < explosions.size(); j++) {
+			explosions.get(j).update();
+			if (explosions.get(j).shouldRemove()) explosions.remove(j);
 		}
 	}
 
@@ -228,6 +238,7 @@ public class TrainingMode extends Mode{
 
     //method to reset player, music, and some entites in order to restart the level
 	protected void reset() {
+		numAlive = populationSize;
 		deathTime = -1;
 		setPlayers();
 		running = true;
@@ -244,9 +255,20 @@ public class TrainingMode extends Mode{
 	protected void setPlayers() {
 		for (int i = 0; i < players.size(); i++) {
 			PlayerManager pm = players.get(i);
+			pm.getPlayer().setDead(false);
 			pm.init();
 			pm.getPlayer().setPosition(spawnX-i*5, spawnY);
 		}
+	}
+
+	private PlayerManager getPlayerInFirst() {
+		PlayerManager furthest = players.get(0);
+		for (int i = 1; i < players.size(); i++) {
+			if (players.get(i).getPlayer().getx() >= furthest.getPlayer().getx()) {
+				furthest = players.get(i);
+			}
+		}
+		return furthest;
 	}
 
 	private double[] getNetworkInputs(PlayerManager pm, boolean shouldNormalize) {
