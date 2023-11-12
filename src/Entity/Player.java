@@ -266,7 +266,7 @@ public abstract class Player extends GameObject{
 		moving = true;
 		width = 32;
 		height = 32;
-		dx = 5;
+		dx = 32/6;
 		jumpSpeed = -9;
 	};
 	

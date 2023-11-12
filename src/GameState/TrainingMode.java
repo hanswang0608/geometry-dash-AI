@@ -25,8 +25,8 @@ public class TrainingMode extends Mode{
 	private int generation;
 
 	private static final int respawnDelayMS = 250;
-	private static final int spawnX = 64;
-	private static final int spawnY = 560;
+	private static final double spawnX = 64;
+	private static final double spawnY = 560;
 
 	private static final int AI_VIEW_DISTANCE = 4;
 	private static final int populationSize = 30;
@@ -124,7 +124,7 @@ public class TrainingMode extends Mode{
 
 			// get jump input from neural network
 			double networkOutput = agent.act(getNetworkInputs(pm, true))[0];
-			boolean shouldJump = networkOutput >= 0.5;
+			boolean shouldJump = networkOutput >= 0.9;
 			if (shouldJump) {
 				startJumping(pm);
 			} else {
@@ -313,7 +313,7 @@ public class TrainingMode extends Mode{
 		output[0] = nextColX - playerFront;
 		
 		byte[][] map = tileMap.getMap();
-		byte[] row = map[spawnY/32];
+		byte[] row = map[(int)spawnY/32];
 		int col = (int)Math.ceil((double)playerFront / tileSize);
 		for (int i = 0; i+col < row.length && i < AI_VIEW_DISTANCE; i++) {
 			output[i+1] = (double)row[i+col];
