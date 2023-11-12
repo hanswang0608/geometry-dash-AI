@@ -44,11 +44,7 @@ public abstract class Player extends GameObject{
 		super(tm);
 		this.pm = pm;
 		
-		width = 32;
-		height = 32;
-		dx = 5;
-		jumpSpeed = -9;
-		moving = true;
+		initValues();
 	}
 	
 	//calculate the 4 corners of the player, whether they hit a solid block or a special tile
@@ -266,7 +262,13 @@ public abstract class Player extends GameObject{
 	public abstract void getNextPosition();
 	
 	//different modes have different attributes so it is abstract method
-	public abstract void initValues();
+	public void initValues() {
+		moving = true;
+		width = 32;
+		height = 32;
+		dx = 5;
+		jumpSpeed = -9;
+	};
 	
 	public void updateGravity(int g) {
 		if (g == -1) {

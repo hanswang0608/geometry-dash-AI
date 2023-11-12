@@ -55,6 +55,7 @@ public class Ball extends Player{
 	}
 	
 	public void initValues() {
+		super.initValues();
 		fallSpeed = 0.6;
 		maxFallSpeed = 10;
 	}

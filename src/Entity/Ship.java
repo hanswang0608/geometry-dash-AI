@@ -59,6 +59,7 @@ public class Ship extends Player{
 	}
 	
 	public void initValues() {
+		super.initValues();
 		fallSpeed = 0.3;
 		maxFallSpeed = 6;
 	}

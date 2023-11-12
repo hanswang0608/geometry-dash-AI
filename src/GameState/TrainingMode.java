@@ -84,6 +84,10 @@ public class TrainingMode extends Mode{
 
 		//if it has been 1 second since dying, respawn the player
 		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelayMS) {
+			population.selectParentsByRank(2);
+			population.crossoverPopulation();
+			population.mutatePopulation();
+			population.updatePopulation();
 			reset();
 		}
 
@@ -107,17 +111,18 @@ public class TrainingMode extends Mode{
 			if(player.isDead()) {
 				explosions.add(new Explosion(player.getx(), player.gety()));
 				numAlive--;
+				agent.setFitness(player.getx());
 			}
 
 			// get jump input from neural network
 			double networkOutput = agent.act(getNetworkInputs(pm, true))[0];
-			// System.out.println(networkOutput);
 			boolean shouldJump = networkOutput >= 0.1;
 			if (shouldJump) {
 				startJumping(pm);
 			} else {
 				stopJumping(pm);
 			}
+			
 	
 			//update background
 			bg.setPosition(tileMap.getx(), tileMap.gety());
@@ -270,6 +275,7 @@ public class TrainingMode extends Mode{
 			PlayerManager pm = players.get(i);
 			pm.getPlayer().setDead(false);
 			pm.init();
+			pm.getPlayer().initValues();
 			pm.getPlayer().setPosition(spawnX-i*5, spawnY);
 		}
 	}

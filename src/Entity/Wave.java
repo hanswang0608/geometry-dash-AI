@@ -51,6 +51,7 @@ public class Wave extends Player{
 	}
 	
 	public void initValues() {
+		super.initValues();
 		fallSpeed = 5;
 	}
 }

@@ -50,6 +50,7 @@ public class Cube extends Player{
 	}
 	
 	public void initValues() {
+		super.initValues();
 		fallSpeed = 0.57;
 		maxFallSpeed = 10;
 	}
