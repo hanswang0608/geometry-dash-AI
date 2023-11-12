@@ -32,6 +32,10 @@ public class PlayerManager {
 		players.add(new Ball(tm, this));
 	}
 
+	public void init() {
+		currentPlayer = CUBE;
+	}
+
 	//when changing modes, also transfer attributes and stats
 	public void setPlayer(int player) {
 		Player p = players.get(currentPlayer);
