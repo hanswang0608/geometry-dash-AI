@@ -109,20 +109,15 @@ public class TrainingMode extends Mode{
 				numAlive--;
 			}
 
-			// if (player.getx() == 94) {
-			// 	startJumping(pm);
-			// }
-
-			// // get jump input from neural network
-			// double networkOutput = agent.act(getNetworkInputs(pm, true))[0];
-			// // System.out.println(networkOutput);
-			// boolean shouldJump = networkOutput >= 0.1;
-			// if (shouldJump) {
-			// 	startJumping(pm);
-			// } else {
-			// 	// stopJumping(pm);
-			// }
-			// System.out.println(pm.getPlayer().getJumping());
+			// get jump input from neural network
+			double networkOutput = agent.act(getNetworkInputs(pm, true))[0];
+			// System.out.println(networkOutput);
+			boolean shouldJump = networkOutput >= 0.1;
+			if (shouldJump) {
+				startJumping(pm);
+			} else {
+				stopJumping(pm);
+			}
 	
 			//update background
 			bg.setPosition(tileMap.getx(), tileMap.gety());
@@ -219,20 +214,20 @@ public class TrainingMode extends Mode{
     //key listeners
 	public void keyPressed(int k) {
 		if (k == KeyEvent.VK_UP) {
-			for (PlayerManager pm : players) {
-				startJumping(pm);
-			}
+			// for (PlayerManager pm : players) {
+			// 	startJumping(pm);
+			// }
 		}
 		if (k == KeyEvent.VK_ESCAPE) gsm.beginState(GameStateManager.PAUSESTATE);		//esc to pause
 		if (k == KeyEvent.VK_R) {reset();} 		//r to restart level
 	}
 
+	// disable this because it's constantly being invoked due to the way gsm.keyUpdate() is setup, stoping the AI's jumps
 	public void keyReleased(int k) {
-		System.out.println(k);
 		if (k == KeyEvent.VK_UP) {
-			for (PlayerManager pm : players) {
-				stopJumping(pm);
-			}
+			// for (PlayerManager pm : players) {
+			// 	stopJumping(pm);
+			// }
 		}
 	}
 
