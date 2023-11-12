@@ -39,7 +39,7 @@ public abstract class Player extends GameObject{
 	protected boolean bottomRight;	
 	
 	protected boolean dead;
-	
+
 	public Player(TileMap tm, PlayerManager pm) {
 		super(tm);
 		this.pm = pm;

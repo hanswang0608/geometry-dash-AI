@@ -30,9 +30,9 @@ public class TrainingMode extends Mode{
 	private static final double SPAWN_X = 64;
 	private static final double SPAWN_Y = 560;
 
-	private static final int AI_VIEW_DISTANCE = 4;
+	private static final int AI_VIEW_DISTANCE = 1;
 	private static final int POPULATION_SIZE = 30;
-	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 100, 100, 100, 1};
+	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 6, 4, 1};
 	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 720, 2880, 6000};
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
@@ -110,6 +110,12 @@ public class TrainingMode extends Mode{
 			}
 		}
 
+		double[] networkOutputs = new double[POPULATION_SIZE];
+		double[][] networkInputs = new double[POPULATION_SIZE][];
+		for (int i = 0; i < networkInputs.length; i++) {
+			networkInputs[i] = new double[2];
+		}
+
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			PlayerManager pm = players.get(i);
 			Player player = pm.getPlayer();
@@ -123,11 +129,15 @@ public class TrainingMode extends Mode{
 				player.setMoving(false);
 				if (player.getDX() == 0) {
 					gsm.setState(GameStateManager.WINSTATE);
+					agent.setFitness(player.getx());
 					if (Config.saveWinner) {
-						population.getMostFit().getNetwork().saveToFile("ai_models/training-win.model", true);
+						agent.getNetwork().saveToFile("ai_models/training-win.model", true);
 					}
 					System.out.println("gen " + generation);
 					GamePanel.numTicks = TRAINING_TICK_RATES[0];
+					System.out.println(agent.getChromosome());
+					System.out.println("agent: " + agent.getID() + " " + agent.getFitness());
+					System.out.println("mostfit: " + population.getMostFit().getID() + " " + population.getMostFit().getFitness());
 				}
 			}
 			
@@ -139,14 +149,15 @@ public class TrainingMode extends Mode{
 			}
 
 			// get jump input from neural network
-			double networkOutput = agent.act(getNetworkInputs(pm, true))[0];
+			networkInputs[i] = getNetworkInputs(pm, true);
+			double networkOutput = agent.act(networkInputs[i])[0];
+			networkOutputs[i] = networkOutput;
 			boolean shouldJump = networkOutput >= 0.98;
 			if (shouldJump) {
 				startJumping(pm);
 			} else {
 				stopJumping(pm);
 			}
-			
 	
 			//update background
 			bg.setPosition(tileMap.getx(), tileMap.gety());
@@ -188,13 +199,20 @@ public class TrainingMode extends Mode{
 
 		//locks the vertical movement of the screen for modes other than Cube
 		// lock camera movement to the player furthest ahead
-		Player player = getPlayerInFirst().getPlayer();
+		Player player = players.get(getPlayerInFirst()).getPlayer();
 		if (player instanceof Cube) {
 			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety()); 
 		}
 		else {
 			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx());
 		}
+
+		System.out.print(getPlayerInFirst() + " " + players.get(getPlayerInFirst()).getPlayer().getx() + " " + (networkOutputs[getPlayerInFirst()] >= 0.98));
+		for (double d : networkInputs[getPlayerInFirst()]) {
+			System.out.print(" " + d + "|");
+		}
+		System.out.print(" " + networkOutputs[getPlayerInFirst()]);
+		System.out.println();
 		
 		//update explosion
 		for (int j = 0; j < explosions.size(); j++) {
@@ -320,20 +338,25 @@ public class TrainingMode extends Mode{
 
     //creating and spawning the player
 	protected void setPlayers() {
-		for (int i = 0; i < players.size(); i++) {
-			PlayerManager pm = players.get(i);
+		int playerInd = 0;
+		double spawnX = SPAWN_X;
+		while (playerInd < players.size()) {
+			if (spawnX < 10) spawnX = SPAWN_X;
+			PlayerManager pm = players.get(playerInd);
 			pm.getPlayer().setDead(false);
 			pm.init();
 			pm.getPlayer().initValues();
-			pm.getPlayer().setPosition(SPAWN_X-i*2, SPAWN_Y);
+			pm.getPlayer().setPosition(spawnX, SPAWN_Y);
+			playerInd++;
+			// spawnX -= pm.getPlayer().getDX();
 		}
 	}
 
-	private PlayerManager getPlayerInFirst() {
-		PlayerManager furthest = players.get(0);
+	private int getPlayerInFirst() {
+		int furthest = 0;
 		for (int i = 1; i < players.size(); i++) {
-			if (players.get(i).getPlayer().getx() >= furthest.getPlayer().getx()) {
-				furthest = players.get(i);
+			if (players.get(i).getPlayer().getx() >= players.get(furthest).getPlayer().getx()) {
+				furthest = i;
 			}
 		}
 		return furthest;

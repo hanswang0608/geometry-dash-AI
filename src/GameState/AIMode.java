@@ -12,6 +12,7 @@ import TileMap.Background;
 import TileMap.TileMap;
 
 import JavaNN.Network.*;
+import JavaNN.Training.Agent;
 
 public class AIMode extends Mode{
 	private PlayerManager pm;
@@ -61,6 +62,8 @@ public class AIMode extends Mode{
 
 		try {
 			network = NeuralNetwork.loadFromFile("ai_models/training-win.model");
+			Agent agent = new Agent(network);
+			System.out.println(agent.getChromosome());
 		} catch (IOException e) {}
     }
 
@@ -71,6 +74,7 @@ public class AIMode extends Mode{
 			return;
 		}
 
+		
 		//update player
 		if (running) pm.update();
 		if(pm.getPlayer().atEndOfLevel()) {
@@ -89,15 +93,22 @@ public class AIMode extends Mode{
 			pm.deathSound.play();
 			explosions.add(new Explosion(pm.getPlayer().getx(), pm.getPlayer().gety()));
 		}
-
+		
 		// get jump input from neural network
-		double networkOutput = network.evaluate(getNetworkInputs(pm, true))[0];
+		double[] networkInputs = getNetworkInputs(pm, true);
+		double networkOutput = network.evaluate(networkInputs)[0];
 		boolean shouldJump = networkOutput >= 0.98;
 		if (shouldJump) {
 			startJumping(pm);
 		} else {
 			stopJumping(pm);
 		}
+		System.out.print(pm.getPlayer().getx() + " " + shouldJump);
+		for (double d : networkInputs) {
+			System.out.print(" " + d + "|");
+		}
+		System.out.print(" " + networkOutput);
+		System.out.println();
 
 		//locks the vertical movement of the screen for modes other than Cube
 		if (pm.getPlayer() instanceof Cube) {
