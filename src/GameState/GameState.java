@@ -12,7 +12,6 @@ public abstract class GameState {
 	public abstract void draw(java.awt.Graphics2D g);
 	public abstract void keyPressed(int k);
 	public abstract void keyReleased(int k);
-	public void keyTyped(int k) {}
 
 	public void playMusic() {
 		if (music == null) return;

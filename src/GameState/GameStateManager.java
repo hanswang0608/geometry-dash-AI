@@ -102,8 +102,4 @@ public class GameStateManager {
 	public void keyReleased(int k) {
 		gameStates.get(currentState).keyReleased(k);
 	}
-
-	public void keyTyped(int k) {
-		gameStates.get(currentState).keyTyped(k);
-	}
 }

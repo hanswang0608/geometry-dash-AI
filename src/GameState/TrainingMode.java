@@ -23,13 +23,16 @@ public class TrainingMode extends Mode{
 	private Population population;
 	private int numAlive;
 	private int generation;
+	private int trainingSpeed;
 
 	private static final int BASE_RESPAWN_DELAY = 250;
-	private static final double spawnX = 64;
-	private static final double spawnY = 560;
+	private static final double SPAWN_X = 64;
+	private static final double SPAWN_Y = 560;
 
 	private static final int AI_VIEW_DISTANCE = 10;
-	private static final int populationSize = 30;
+	private static final int POPULATION_SIZE = 30;
+	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 6, 4, 1};
+	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 720, 2880, 8640};
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
         this.gsm = gsm;
@@ -45,8 +48,9 @@ public class TrainingMode extends Mode{
 		portals = new ArrayList<Portal>();
 		explosions = new ArrayList<Explosion>();
 
-		numAlive = populationSize;
+		numAlive = POPULATION_SIZE;
 		generation = 0;
+		trainingSpeed = 0;
     }
 
     public void init() {
@@ -66,18 +70,20 @@ public class TrainingMode extends Mode{
         // create entities by scanning the level's tilemap
 		scanMap(tileMap.getMap());
 
-		population = new Population(populationSize, new int[]{AI_VIEW_DISTANCE + 1, 10, 10, 1});
+		population = new Population(POPULATION_SIZE, NETWORK_ARCHITECTURE);
 
         //initialize player settings
 		players.clear();
-		for (int i = 0; i < populationSize; i++) {
+		for (int i = 0; i < POPULATION_SIZE; i++) {
 			players.add(new PlayerManager(tileMap));
 		}
 		deathTime = -1;
 		setPlayers();
 		running = true;
-		numAlive = populationSize;
+		numAlive = POPULATION_SIZE;
 		generation = 0;
+		trainingSpeed = 0;
+		GamePanel.NUM_TICKS = TRAINING_TICK_RATES[trainingSpeed];
     }
 
     public void update() {
@@ -99,7 +105,7 @@ public class TrainingMode extends Mode{
 			population.getMostFit().getNetwork().saveToFile("ai_models/temp/training-gen-"+generation+".model", true);
 		}
 
-		for (int i = 0; i < populationSize; i++) {
+		for (int i = 0; i < POPULATION_SIZE; i++) {
 			PlayerManager pm = players.get(i);
 			Player player = pm.getPlayer();
 			Agent agent = population.getAgents()[i];
@@ -228,11 +234,12 @@ public class TrainingMode extends Mode{
 		g.setColor(new Color(1, 1, 1, 0.5f));
 		g.setFont(new Font("Calibri", Font.BOLD, 20));
 		g.drawString("Gen " + generation, GamePanel.WIDTH/2-20, 20);
+
+		String speed = new String(new char[trainingSpeed]).replace("\0", ">");
+		g.drawString(speed, GamePanel.WIDTH-60, 20);
+
 		//Note: draw is set up to draw objects in order of appearance
 	}
-
-	@Override
-	public void keyTyped(int k) {}
 
     //key listeners
 	public void keyPressed(int k) {
@@ -253,13 +260,15 @@ public class TrainingMode extends Mode{
 			// }
 		}
 		if (k == KeyEvent.VK_COMMA) {
-			if (GamePanel.NUM_TICKS > 60) {
-				GamePanel.NUM_TICKS /= 2;
-				System.out.println("tick rate: " + GamePanel.NUM_TICKS);
-			}
+			trainingSpeed--;
+			if (trainingSpeed < 0) trainingSpeed = 0;
+			GamePanel.NUM_TICKS = TRAINING_TICK_RATES[trainingSpeed];
+			System.out.println("tick rate: " + GamePanel.NUM_TICKS);
 		}
 		if (k == KeyEvent.VK_PERIOD) {
-			GamePanel.NUM_TICKS = GamePanel.NUM_TICKS*2;
+			trainingSpeed++;
+			if (trainingSpeed > TRAINING_TICK_RATES.length-1) trainingSpeed = TRAINING_TICK_RATES.length-1;
+			GamePanel.NUM_TICKS = TRAINING_TICK_RATES[trainingSpeed];
 			System.out.println("tick rate: " + GamePanel.NUM_TICKS);
 		}
 	}
@@ -284,7 +293,7 @@ public class TrainingMode extends Mode{
 
     //method to reset player, music, and some entites in order to restart the level
 	protected void reset() {
-		numAlive = populationSize;
+		numAlive = POPULATION_SIZE;
 		deathTime = -1;
 		setPlayers();
 		running = true;
@@ -304,7 +313,7 @@ public class TrainingMode extends Mode{
 			pm.getPlayer().setDead(false);
 			pm.init();
 			pm.getPlayer().initValues();
-			pm.getPlayer().setPosition(spawnX-i*2, spawnY);
+			pm.getPlayer().setPosition(SPAWN_X-i*2, SPAWN_Y);
 		}
 	}
 
@@ -327,7 +336,7 @@ public class TrainingMode extends Mode{
 		output[0] = nextColX - playerFront;
 		
 		byte[][] map = tileMap.getMap();
-		byte[] row = map[(int)spawnY/32];
+		byte[] row = map[(int)SPAWN_Y/32];
 		int col = (int)Math.ceil((double)playerFront / tileSize);
 		for (int i = 0; i+col < row.length && i < AI_VIEW_DISTANCE; i++) {
 			output[i+1] = (double)row[i+col];
