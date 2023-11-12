@@ -14,6 +14,7 @@ import TileMap.Background;
 import TileMap.TileMap;
 
 import JavaNN.Training.*;
+import JavaNN.Util.Config;
 
 public class TrainingMode extends Mode{
 	private ArrayList<PlayerManager> players;
@@ -29,7 +30,7 @@ public class TrainingMode extends Mode{
 	private static final double SPAWN_X = 64;
 	private static final double SPAWN_Y = 560;
 
-	private static final int AI_VIEW_DISTANCE = 10;
+	private static final int AI_VIEW_DISTANCE = 4;
 	private static final int POPULATION_SIZE = 30;
 	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 6, 4, 1};
 	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 720, 2880, 8640};
@@ -38,7 +39,7 @@ public class TrainingMode extends Mode{
         this.gsm = gsm;
 		this.bg = bg;
 		this.tileMap = tileMap;
-		this.music = music;
+		this.music = null;
 
 		players = new ArrayList<PlayerManager>();
 
@@ -84,6 +85,8 @@ public class TrainingMode extends Mode{
 		generation = 0;
 		trainingSpeed = 0;
 		GamePanel.NUM_TICKS = TRAINING_TICK_RATES[trainingSpeed];
+
+		Config.saveMostFitPerGen = false;
     }
 
     public void update() {
@@ -102,7 +105,9 @@ public class TrainingMode extends Mode{
 			population.updatePopulation();
 			reset();
 			generation++;
-			population.getMostFit().getNetwork().saveToFile("ai_models/temp/training-gen-"+generation+".model", true);
+			if (Config.saveMostFitPerGen) {
+				population.getMostFit().getNetwork().saveToFile("ai_models/temp/training-gen-"+generation+".model", true);
+			}
 		}
 
 		for (int i = 0; i < POPULATION_SIZE; i++) {
@@ -118,7 +123,9 @@ public class TrainingMode extends Mode{
 				player.setMoving(false);
 				if (player.getDX() == 0) {
 					gsm.setState(GameStateManager.WINSTATE);
-					population.getMostFit().getNetwork().saveToFile("ai_models/training-win.model", true);
+					if (Config.saveWinner) {
+						population.getMostFit().getNetwork().saveToFile("ai_models/training-win.model", true);
+					}
 				}
 			}
 			
