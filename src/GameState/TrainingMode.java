@@ -90,6 +90,7 @@ public class TrainingMode extends Mode{
 		for (int i = 0; i < populationSize; i++) {
 			PlayerManager pm = players.get(i);
 			Player player = pm.getPlayer();
+			Agent agent = population.getAgents()[i];
 
 			if (player.isDead()) continue;
 
@@ -102,10 +103,26 @@ public class TrainingMode extends Mode{
 				}
 			}
 			
+			// death update
 			if(player.isDead()) {
 				explosions.add(new Explosion(player.getx(), player.gety()));
 				numAlive--;
 			}
+
+			// if (player.getx() == 94) {
+			// 	startJumping(pm);
+			// }
+
+			// // get jump input from neural network
+			// double networkOutput = agent.act(getNetworkInputs(pm, true))[0];
+			// // System.out.println(networkOutput);
+			// boolean shouldJump = networkOutput >= 0.1;
+			// if (shouldJump) {
+			// 	startJumping(pm);
+			// } else {
+			// 	// stopJumping(pm);
+			// }
+			// System.out.println(pm.getPlayer().getJumping());
 	
 			//update background
 			bg.setPosition(tileMap.getx(), tileMap.gety());
@@ -211,6 +228,7 @@ public class TrainingMode extends Mode{
 	}
 
 	public void keyReleased(int k) {
+		System.out.println(k);
 		if (k == KeyEvent.VK_UP) {
 			for (PlayerManager pm : players) {
 				stopJumping(pm);
