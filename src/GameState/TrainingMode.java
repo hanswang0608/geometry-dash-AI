@@ -45,8 +45,6 @@ public class TrainingMode extends Mode{
 		portals = new ArrayList<Portal>();
 		explosions = new ArrayList<Explosion>();
 
-		int networkInputSize = AI_VIEW_DISTANCE + 1;
-		population = new Population(10, new int[]{networkInputSize, 6, 4, 1});
 		numAlive = populationSize;
 		generation = 0;
     }
@@ -67,6 +65,8 @@ public class TrainingMode extends Mode{
 
         // create entities by scanning the level's tilemap
 		scanMap(tileMap.getMap());
+
+		population = new Population(10, new int[]{AI_VIEW_DISTANCE + 1, 6, 4, 1});
 
         //initialize player settings
 		players.clear();
@@ -89,12 +89,13 @@ public class TrainingMode extends Mode{
 
 		//if it has been 1 second since dying, respawn the player
 		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelayMS) {
-			population.selectParentsByRank(2);
+			population.selectParentsByRank(0);
 			population.crossoverPopulation();
 			population.mutatePopulation();
 			population.updatePopulation();
 			reset();
 			generation++;
+			population.getMostFit().getNetwork().saveToFile("ai_models/temp/training-gen-"+generation+".model", true);
 		}
 
 		for (int i = 0; i < populationSize; i++) {
@@ -110,6 +111,7 @@ public class TrainingMode extends Mode{
 				player.setMoving(false);
 				if (player.getDX() == 0) {
 					gsm.setState(GameStateManager.WINSTATE);
+					population.getMostFit().getNetwork().saveToFile("ai_models/training-win.model", true);
 				}
 			}
 			
