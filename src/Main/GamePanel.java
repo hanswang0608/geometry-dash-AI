@@ -30,8 +30,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	private boolean[] keys;
 
 	// game physics
-	public static int NUM_TICKS = 60;
-	public static int MAX_NUM_FRAMES = 60;
+	public static int numTicks = 60;
+	public static int maxNumFrames = 60;
 
 	private final String[] modes = {"", "Training", "AI"};
 	private final Font modeFont = new Font("Calibri", Font.BOLD, 20);
@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		long timer = System.currentTimeMillis();
 		int framesPerTick = 0;
 		while (running) {
-			double ns = 1000000000 / (double)NUM_TICKS;
+			double ns = 1000000000 / (double)numTicks;
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
 			lastTime = now;
@@ -85,7 +85,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				framesPerTick = 0;
 				ticks++;
 			}
-			if (running && framesPerTick < (double)MAX_NUM_FRAMES/NUM_TICKS) {
+			if (running && framesPerTick < (double)maxNumFrames/numTicks) {
 				draw();
 				drawToScreen();
 				framesPerTick++;
@@ -94,8 +94,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				System.out.println("FPS: " + frames);
-				System.out.println("Ticks: " + ticks);
+				System.out.println("FPS: " + frames + "\tTicks: " + ticks);
 				frames = 0;
 				ticks = 0;
 			}

@@ -58,8 +58,8 @@ public class GameStateManager {
 		gameStates.get(state).init();
 		gameStates.get(currentState).stopMusic();
 		prevStates.push(currentState);
+		gameStates.get(state).playMusic();
 		currentState = state;
-		gameStates.get(currentState).playMusic();
 	}
 
 	public int getLastState() {

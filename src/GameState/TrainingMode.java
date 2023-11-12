@@ -84,7 +84,7 @@ public class TrainingMode extends Mode{
 		numAlive = POPULATION_SIZE;
 		generation = 0;
 		trainingSpeed = 0;
-		GamePanel.NUM_TICKS = TRAINING_TICK_RATES[trainingSpeed];
+		GamePanel.numTicks = TRAINING_TICK_RATES[trainingSpeed];
 
 		Config.saveMostFitPerGen = false;
     }
@@ -97,7 +97,7 @@ public class TrainingMode extends Mode{
 		}
 
 		//if it has been 1 second since dying, respawn the player
-		int respawnDelay = Math.floorDiv(BASE_RESPAWN_DELAY, GamePanel.NUM_TICKS/60);
+		int respawnDelay = Math.floorDiv(BASE_RESPAWN_DELAY, GamePanel.numTicks/60);
 		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelay) {
 			population.selectParentsByRank(2);
 			population.crossoverPopulation();
@@ -127,6 +127,7 @@ public class TrainingMode extends Mode{
 						population.getMostFit().getNetwork().saveToFile("ai_models/training-win.model", true);
 					}
 					System.out.println("gen " + generation);
+					GamePanel.numTicks = TRAINING_TICK_RATES[0];
 				}
 			}
 			
@@ -256,7 +257,10 @@ public class TrainingMode extends Mode{
 			// 	startJumping(pm);
 			// }
 		}
-		if (k == KeyEvent.VK_ESCAPE) gsm.beginState(GameStateManager.PAUSESTATE);		//esc to pause
+		if (k == KeyEvent.VK_ESCAPE){
+			gsm.beginState(GameStateManager.PAUSESTATE);		//esc to pause
+			GamePanel.numTicks = TRAINING_TICK_RATES[0];
+		} 
 		if (k == KeyEvent.VK_R) {reset();} 		//r to restart level
 	}
 
@@ -270,14 +274,14 @@ public class TrainingMode extends Mode{
 		if (k == KeyEvent.VK_COMMA) {
 			trainingSpeed--;
 			if (trainingSpeed < 0) trainingSpeed = 0;
-			GamePanel.NUM_TICKS = TRAINING_TICK_RATES[trainingSpeed];
-			System.out.println("tick rate: " + GamePanel.NUM_TICKS);
+			GamePanel.numTicks = TRAINING_TICK_RATES[trainingSpeed];
+			System.out.println("tick rate: " + GamePanel.numTicks);
 		}
 		if (k == KeyEvent.VK_PERIOD) {
 			trainingSpeed++;
 			if (trainingSpeed > TRAINING_TICK_RATES.length-1) trainingSpeed = TRAINING_TICK_RATES.length-1;
-			GamePanel.NUM_TICKS = TRAINING_TICK_RATES[trainingSpeed];
-			System.out.println("tick rate: " + GamePanel.NUM_TICKS);
+			GamePanel.numTicks = TRAINING_TICK_RATES[trainingSpeed];
+			System.out.println("tick rate: " + GamePanel.numTicks);
 		}
 	}
 

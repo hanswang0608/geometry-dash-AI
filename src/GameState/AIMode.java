@@ -2,6 +2,7 @@ package GameState;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import Audio.AudioPlayer;
@@ -13,11 +14,15 @@ import TileMap.TileMap;
 import JavaNN.Network.*;
 
 public class AIMode extends Mode{
-	protected PlayerManager pm;
-	protected float deathTime; 	//keeps track of time of death, to create a 1 second respawn delay
-	protected boolean running;	//determines if the player should be updated
+	private PlayerManager pm;
+	private float deathTime; 	//keeps track of time of death, to create a 1 second respawn delay
+	private boolean running;	//determines if the player should be updated
+	private NeuralNetwork network;
 
-	protected static final int respawnDelayMS = 1000;
+	private static final int RESPAWN_DELAY_MS = 1000;
+	private static final double SPAWN_X = 64;
+	private static final double SPAWN_Y = 560;
+
 
     public AIMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
         this.gsm = gsm;
@@ -30,7 +35,6 @@ public class AIMode extends Mode{
 		gportals = new ArrayList<GravityPortal>();
 		portals = new ArrayList<Portal>();
 		explosions = new ArrayList<Explosion>();
-
     }
 
     public void init() {
@@ -56,12 +60,17 @@ public class AIMode extends Mode{
 		running = true;
 
 		try {
-			NeuralNetwork network = NeuralNetwork.loadFromFile("ai_models/XOR.model");
-			System.out.println(network.evaluate(new double[]{1,0})[0]);
-		} catch (Exception e) {}
+			network = NeuralNetwork.loadFromFile("ai_models/training-win.model");
+		} catch (IOException e) {}
     }
 
     public void update() {
+		// quit to menu if neural network model isn't loaded
+		if (network == null) {
+			gsm.beginState(GameStateManager.MENUSTATE);
+			return;
+		}
+
 		//update player
 		if (running) pm.update();
 		if(pm.getPlayer().atEndOfLevel()) {
@@ -79,6 +88,15 @@ public class AIMode extends Mode{
 			stopMusic();
 			pm.deathSound.play();
 			explosions.add(new Explosion(pm.getPlayer().getx(), pm.getPlayer().gety()));
+		}
+
+		// get jump input from neural network
+		double networkOutput = network.evaluate(getNetworkInputs(pm, true))[0];
+		boolean shouldJump = networkOutput >= 0.98;
+		if (shouldJump) {
+			startJumping(pm);
+		} else {
+			stopJumping(pm);
 		}
 
 		//locks the vertical movement of the screen for modes other than Cube
@@ -133,7 +151,7 @@ public class AIMode extends Mode{
 		}
 		
 		//if it has been 1 second since dying, respawn the player
-		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelayMS) {
+		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > RESPAWN_DELAY_MS) {
 			reset();
 		}
 	}
@@ -174,16 +192,16 @@ public class AIMode extends Mode{
     //key listeners
 	public void keyPressed(int k) {
 		if (k == KeyEvent.VK_UP) {
-			pm.getPlayer().setJumping(true);
-			//calculating the firstJump condition
-			if (pm.getPlayer().isFirstClick()) {
-				pm.getPlayer().setFirstClickTime(System.nanoTime());
-				pm.getPlayer().setFirstClick(false);
-			}
-			if ((System.nanoTime() - pm.getPlayer().getFirstClickTime()) / 1000000 < 100) {
-				pm.getPlayer().setFirstJump(true);
-			}
-			else pm.getPlayer().setFirstJump(false);
+			// pm.getPlayer().setJumping(true);
+			// //calculating the firstJump condition
+			// if (pm.getPlayer().isFirstClick()) {
+			// 	pm.getPlayer().setFirstClickTime(System.nanoTime());
+			// 	pm.getPlayer().setFirstClick(false);
+			// }
+			// if ((System.nanoTime() - pm.getPlayer().getFirstClickTime()) / 1000000 < 100) {
+			// 	pm.getPlayer().setFirstJump(true);
+			// }
+			// else pm.getPlayer().setFirstJump(false);
 		}
 		if (k == KeyEvent.VK_ESCAPE) gsm.beginState(GameStateManager.PAUSESTATE);		//esc to pause
 		if (k == KeyEvent.VK_R) {reset();} 		//r to restart level
@@ -191,13 +209,31 @@ public class AIMode extends Mode{
 
 	public void keyReleased(int k) {
 		if (k == KeyEvent.VK_UP) {
-			pm.getPlayer().setJumping(false);
-			pm.getPlayer().setFirstClick(true);
+			// pm.getPlayer().setJumping(false);
+			// pm.getPlayer().setFirstClick(true);
 		}
 	}
 
+	private void startJumping(PlayerManager pm) {
+		pm.getPlayer().setJumping(true);
+		//calculating the firstJump condition
+		if (pm.getPlayer().isFirstClick()) {
+			pm.getPlayer().setFirstClickTime(System.nanoTime());
+			pm.getPlayer().setFirstClick(false);
+		}
+		if ((System.nanoTime() - pm.getPlayer().getFirstClickTime()) / 1000000 < 100) {
+			pm.getPlayer().setFirstJump(true);
+		}
+		else pm.getPlayer().setFirstJump(false);
+	}
+
+	private void stopJumping(PlayerManager pm) {
+		pm.getPlayer().setJumping(false);
+		pm.getPlayer().setFirstClick(true);
+	}
+
     //method to reset player, music, and some entites in order to restart the level
-	protected void reset() {
+	private void reset() {
 		deathTime = -1;
 		setPlayer();
 		running = true;
@@ -211,9 +247,34 @@ public class AIMode extends Mode{
 	}
 
     //creating and spawning the player
-	protected void setPlayer() {
+	private void setPlayer() {
 		pm = new PlayerManager(tileMap);
-		pm.getPlayer().setPosition(64, 560);
-		pm.getPlayer().setDX(0);
+		pm.getPlayer().setPosition(SPAWN_X, SPAWN_Y);
+	}
+
+	private double[] getNetworkInputs(PlayerManager pm, boolean shouldNormalize) {
+		int tileSize = tileMap.getTileSize();
+		int playerFront = pm.getPlayer().getx() + pm.getPlayer().getCWidth()/2;
+		int nextColX = Math.ceilDiv(playerFront, tileSize) * tileSize;
+
+		int aiViewDistance = network.getArchitecture()[0]-1;
+		double[] output = new double[aiViewDistance + 1]; // network can see 10 blocks in front
+		output[0] = nextColX - playerFront;
+		
+		byte[][] map = tileMap.getMap();
+		byte[] row = map[(int)SPAWN_Y/32];
+		int col = (int)Math.ceil((double)playerFront / tileSize);
+		for (int i = 0; i+col < row.length && i < aiViewDistance; i++) {
+			output[i+1] = (double)row[i+col];
+		}
+
+		if (shouldNormalize) {
+			output[0] /= tileSize;
+			for (int i = 1; i < output.length; i++) {
+				if (output[i] > 0) output[i] = 1;
+			}
+		}
+
+		return output;
 	}
 }
