@@ -24,11 +24,11 @@ public class TrainingMode extends Mode{
 	private int numAlive;
 	private int generation;
 
-	private static final int respawnDelayMS = 250;
+	private static final int BASE_RESPAWN_DELAY = 250;
 	private static final double spawnX = 64;
 	private static final double spawnY = 560;
 
-	private static final int AI_VIEW_DISTANCE = 4;
+	private static final int AI_VIEW_DISTANCE = 10;
 	private static final int populationSize = 30;
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
@@ -66,7 +66,7 @@ public class TrainingMode extends Mode{
         // create entities by scanning the level's tilemap
 		scanMap(tileMap.getMap());
 
-		population = new Population(populationSize, new int[]{AI_VIEW_DISTANCE + 1, 6, 4, 1});
+		population = new Population(populationSize, new int[]{AI_VIEW_DISTANCE + 1, 10, 10, 1});
 
         //initialize player settings
 		players.clear();
@@ -88,7 +88,8 @@ public class TrainingMode extends Mode{
 		}
 
 		//if it has been 1 second since dying, respawn the player
-		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelayMS) {
+		int respawnDelay = Math.floorDiv(BASE_RESPAWN_DELAY, GamePanel.NUM_TICKS/60);
+		if (deathTime != -1 && (System.nanoTime() - deathTime) / 1000000 > respawnDelay) {
 			population.selectParentsByRank(2);
 			population.crossoverPopulation();
 			population.mutatePopulation();
@@ -124,7 +125,7 @@ public class TrainingMode extends Mode{
 
 			// get jump input from neural network
 			double networkOutput = agent.act(getNetworkInputs(pm, true))[0];
-			boolean shouldJump = networkOutput >= 0.9;
+			boolean shouldJump = networkOutput >= 0.98;
 			if (shouldJump) {
 				startJumping(pm);
 			} else {
@@ -230,6 +231,9 @@ public class TrainingMode extends Mode{
 		//Note: draw is set up to draw objects in order of appearance
 	}
 
+	@Override
+	public void keyTyped(int k) {}
+
     //key listeners
 	public void keyPressed(int k) {
 		if (k == KeyEvent.VK_UP) {
@@ -241,12 +245,22 @@ public class TrainingMode extends Mode{
 		if (k == KeyEvent.VK_R) {reset();} 		//r to restart level
 	}
 
-	// disable this because it's constantly being invoked due to the way gsm.keyUpdate() is setup, stoping the AI's jumps
 	public void keyReleased(int k) {
 		if (k == KeyEvent.VK_UP) {
+			// disable this because it's constantly being invoked due to the way gsm.keyUpdate() is setup, stoping the AI's jumps
 			// for (PlayerManager pm : players) {
 			// 	stopJumping(pm);
 			// }
+		}
+		if (k == KeyEvent.VK_COMMA) {
+			if (GamePanel.NUM_TICKS > 60) {
+				GamePanel.NUM_TICKS /= 2;
+				System.out.println("tick rate: " + GamePanel.NUM_TICKS);
+			}
+		}
+		if (k == KeyEvent.VK_PERIOD) {
+			GamePanel.NUM_TICKS = GamePanel.NUM_TICKS*2;
+			System.out.println("tick rate: " + GamePanel.NUM_TICKS);
 		}
 	}
 

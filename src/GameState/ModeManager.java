@@ -48,6 +48,10 @@ public class ModeManager {
         modes.get(currentMode).keyReleased(k);
     }
 
+    public void keyTyped(int k) {
+        modes.get(currentMode).keyTyped(k);
+    }
+
     public void playMusic() {
         modes.get(currentMode).playMusic();
     }

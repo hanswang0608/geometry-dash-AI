@@ -28,6 +28,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 	//key value array
 	private boolean[] keys;
 
+	// game physics
+	public static int NUM_TICKS = 60;
+	public static int MAX_NUM_FRAMES = 60;
+
 	private final String[] modes = {"", "Training", "AI"};
 	private final Font modeFont = new Font("Calibri", Font.BOLD, 20);
 	
@@ -65,13 +69,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		init();
 		
 		long lastTime = System.nanoTime();
-		double amountOfTicks = 60;
-		int maxAmountOfFrames = 60;
-		double ns = 1000000000 / amountOfTicks;
 		double delta = 0;
 		long timer = System.currentTimeMillis();
 		int framesPerTick = 0;
 		while (running) {
+			double ns = 1000000000 / (double)NUM_TICKS;
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
 			lastTime = now;
@@ -80,7 +82,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 				delta--;
 				framesPerTick = 0;
 			}
-			if (running && framesPerTick < maxAmountOfFrames/amountOfTicks) {
+			if (running && framesPerTick < (double)MAX_NUM_FRAMES/NUM_TICKS) {
 				draw();
 				drawToScreen();
 				framesPerTick++;
@@ -127,8 +129,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		g2.dispose();
 	}
 	
-	public void keyTyped(KeyEvent e) {} // unused
-	
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 
@@ -147,6 +147,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 		if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_SPACE) {
 			keys[0] = false;
 		}
+	}
+
+	public void keyTyped(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+
+		gsm.keyTyped(keyCode);
 	}
 
 	public void mousePressed(MouseEvent e) {

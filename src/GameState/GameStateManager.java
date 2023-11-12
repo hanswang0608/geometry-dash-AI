@@ -94,12 +94,16 @@ public class GameStateManager {
 			else {gameStates.get(currentState).keyReleased(KeyEvent.VK_UP);}
 		}
 	}
-
+	
 	public void keyPressed(int k) {
 		gameStates.get(currentState).keyPressed(k);
 	}
-
+	
 	public void keyReleased(int k) {
 		gameStates.get(currentState).keyReleased(k);
+	}
+
+	public void keyTyped(int k) {
+		gameStates.get(currentState).keyTyped(k);
 	}
 }

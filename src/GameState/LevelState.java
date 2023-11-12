@@ -43,6 +43,11 @@ public abstract class LevelState extends GameState{
     public void keyReleased(int k) {
         mm.keyReleased(k);
     }
+
+    @Override
+    public void keyTyped(int k) {
+        mm.keyTyped(k);
+    }
     
     @Override
     public void playMusic() {
