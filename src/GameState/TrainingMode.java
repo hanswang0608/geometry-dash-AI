@@ -29,13 +29,15 @@ public class TrainingMode extends Mode{
 	private int trainingSpeed;
 
 	private static final int BASE_RESPAWN_DELAY = 250;
-	private static final double SPAWN_X = 128;
+	private static final double SPAWN_X = 320;
 	private static final double SPAWN_Y = 560;
 
 	private static final int AI_VIEW_DISTANCE = 1;
-	private static final int POPULATION_SIZE = 30;
+	private static final int POPULATION_SIZE = 50;
 	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 6, 4, 1};
 	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 600, 2400, 6000};
+
+	private static final float TRAILING_OPACITY = 0.15f;
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
         this.gsm = gsm;
@@ -112,6 +114,8 @@ public class TrainingMode extends Mode{
 			}
 		}
 
+		int leadingPlayer = getLeadingPlayer();
+		
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			PlayerManager pm = players.get(i);
 			Player player = pm.getPlayer();
@@ -139,7 +143,11 @@ public class TrainingMode extends Mode{
 			
 			// death update
 			if(player.isDead()) {
-				explosions.add(new Explosion(player.getx(), player.gety()));
+				Explosion explosion = new Explosion(player.getx(), player.gety());
+				if (i != leadingPlayer) {
+					explosion.setOpacity(TRAILING_OPACITY);
+				}
+				explosions.add(explosion);
 				numAlive--;
 				agent.setFitness(player.getx());
 			}
@@ -227,15 +235,14 @@ public class TrainingMode extends Mode{
 		
 		if (running) {
 			int leadingPlayer = getLeadingPlayer();
-			Composite temp = g.getComposite();
-			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, TRAILING_OPACITY));
 			// draw the trailing players in reverse order, with translucency
 			for (int i = players.size()-1; i >= 0; i--) {
 				if (!players.get(i).getPlayer().isDead() && i != leadingPlayer) {
 					players.get(i).draw(g);	
 				}
 			}
-			g.setComposite(temp);
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 			// draw the leading player last so it's on top and opaque
 			players.get(leadingPlayer).draw(g);
 		}
@@ -250,8 +257,11 @@ public class TrainingMode extends Mode{
 		
 		for (int i = 0; i < explosions.size(); i++) {
 			explosions.get(i).setMapPosition((int)tileMap.getx(), (int)tileMap.gety());
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, explosions.get(i).getOpacity()));
 			explosions.get(i).draw(g);
 		}
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
 
 		g.setColor(new Color(1, 1, 1, 0.5f));
 		g.setFont(new Font("Calibri", Font.BOLD, 20));

@@ -17,6 +17,7 @@ public class Explosion {
 	
 	private Animation animation;
 	private BufferedImage[] sprites;
+	private float opacity;
 	
 	private boolean remove;
 	
@@ -26,6 +27,8 @@ public class Explosion {
 		width = 32;
 		height = 32;
 		
+		opacity = 1.0f;
+
 		try {
 			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/explosion.png"));
 			sprites = new BufferedImage[spritesheet.getWidth()/width];
@@ -53,6 +56,9 @@ public class Explosion {
 		xmap = x;
 		ymap = y;
 	}
+
+	public void setOpacity(float f) { opacity = f; }
+	public float getOpacity() { return opacity; }
 
 	public void draw(Graphics2D g) {
 		g.drawImage(animation.getImage(), x + xmap - width / 2, y + ymap - height / 2, null);
