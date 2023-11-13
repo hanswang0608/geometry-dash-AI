@@ -1,5 +1,8 @@
 package GameState;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -174,6 +177,7 @@ public class AIMode extends Mode{
 			pads.get(i).draw(g);
 		}
 		
+		// draw player
 		if (running) pm.draw(g);
 		
 		for (int i = 0; i < gportals.size(); i++) {

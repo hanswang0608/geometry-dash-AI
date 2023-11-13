@@ -1,6 +1,8 @@
 package GameState;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -27,13 +29,13 @@ public class TrainingMode extends Mode{
 	private int trainingSpeed;
 
 	private static final int BASE_RESPAWN_DELAY = 250;
-	private static final double SPAWN_X = 64;
+	private static final double SPAWN_X = 128;
 	private static final double SPAWN_Y = 560;
 
-	private static final int AI_VIEW_DISTANCE = 10;
+	private static final int AI_VIEW_DISTANCE = 1;
 	private static final int POPULATION_SIZE = 30;
 	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 6, 4, 1};
-	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 720, 2880, 6000};
+	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 600, 2400, 6000};
 
     public TrainingMode(GameStateManager gsm, Background bg, TileMap tileMap, AudioPlayer music) {
         this.gsm = gsm;
@@ -192,7 +194,7 @@ public class TrainingMode extends Mode{
 
 		//locks the vertical movement of the screen for modes other than Cube
 		// lock camera movement to the player furthest ahead
-		Player player = players.get(getPlayerInFirst()).getPlayer();
+		Player player = players.get(getLeadingPlayer()).getPlayer();
 		if (player instanceof Cube) {
 			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety()); 
 		}
@@ -224,11 +226,18 @@ public class TrainingMode extends Mode{
 		}
 		
 		if (running) {
+			int leadingPlayer = getLeadingPlayer();
+			Composite temp = g.getComposite();
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+			// draw the trailing players in reverse order, with translucency
 			for (int i = players.size()-1; i >= 0; i--) {
-				if (!players.get(i).getPlayer().isDead()) {
-					players.get(i).draw(g);	// draw the players in reverse order so the one in  front is on top
+				if (!players.get(i).getPlayer().isDead() && i != leadingPlayer) {
+					players.get(i).draw(g);	
 				}
 			}
+			g.setComposite(temp);
+			// draw the leading player last so it's on top and opaque
+			players.get(leadingPlayer).draw(g);
 		}
 		
 		for (int i = 0; i < gportals.size(); i++) {
@@ -248,8 +257,11 @@ public class TrainingMode extends Mode{
 		g.setFont(new Font("Calibri", Font.BOLD, 20));
 		g.drawString("Gen " + generation, GamePanel.WIDTH/2-20, 20);
 
-		String speed = new String(new char[trainingSpeed]).replace("\0", ">");
-		g.drawString(speed, GamePanel.WIDTH-60, 20);
+		// String speed = new String(new char[trainingSpeed]).replace("\0", ">");
+		if (trainingSpeed != 0) {
+			String speed = TRAINING_TICK_RATES[trainingSpeed]/TRAINING_TICK_RATES[0] + "x";
+			g.drawString("speed: " + speed, GamePanel.WIDTH-100, 20);
+		}
 
 		//Note: draw is set up to draw objects in order of appearance
 	}
@@ -338,7 +350,7 @@ public class TrainingMode extends Mode{
 		}
 	}
 
-	private int getPlayerInFirst() {
+	private int getLeadingPlayer() {
 		int furthest = 0;
 		for (int i = 1; i < players.size(); i++) {
 			if (players.get(i).getPlayer().getx() >= players.get(furthest).getPlayer().getx()) {
