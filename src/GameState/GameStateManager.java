@@ -23,7 +23,8 @@ public class GameStateManager {
 	public static final int PAUSESTATE = 3;
 	public static final int WINSTATE = 4;
 	public static final int INSTRUCTIONSTATE = 5;
-	public static final int TRAINING_LEVEL_STATE = 6;
+	public static final int TRAINING_LEVEL_0_STATE = 6;
+	public static final int TESTING_LEVEL_0_STATE = 7;
 
 	//store all gamestates in an arraylist, through which they can be switched to and updated
 	public GameStateManager() {
@@ -39,10 +40,12 @@ public class GameStateManager {
 		gameStates.add(new PauseState(this));
 		gameStates.add(new WinState(this));
 		gameStates.add(new InstructionState(this));
-		gameStates.add(new TrainingLevelState(this));
+		gameStates.add(new TrainingLevel0State(this));
+		gameStates.add(new TestingLevel0State(this));
 
 		levelStates.add((LevelState)gameStates.get(LEVEL1STATE));
-		levelStates.add((LevelState)gameStates.get(TRAINING_LEVEL_STATE));
+		levelStates.add((LevelState)gameStates.get(TRAINING_LEVEL_0_STATE));
+		levelStates.add((LevelState)gameStates.get(TESTING_LEVEL_0_STATE));
 	}
 
 	//set to state
@@ -89,7 +92,7 @@ public class GameStateManager {
 	}
 	
 	public void keyUpdate(boolean[] keys) {
-		if (currentState == LEVEL1STATE || currentState == TRAINING_LEVEL_STATE) {
+		if (currentState == LEVEL1STATE || currentState == TRAINING_LEVEL_0_STATE) {
 			if (keys[0]) {gameStates.get(currentState).keyPressed(KeyEvent.VK_UP);}
 			else {gameStates.get(currentState).keyReleased(KeyEvent.VK_UP);}
 		}

@@ -32,7 +32,7 @@ public class TrainingMode extends Mode{
 	private static final double SPAWN_X = 320;
 	private static final double SPAWN_Y = 560;
 
-	private static final int AI_VIEW_DISTANCE = 1;
+	private static final int AI_VIEW_DISTANCE = 5;
 	private static final int POPULATION_SIZE = 50;
 	private static final int[] NETWORK_ARCHITECTURE = {AI_VIEW_DISTANCE + 1, 6, 4, 1};
 	private static final int[] TRAINING_TICK_RATES = {60, 120, 240, 600, 2400, 6000};

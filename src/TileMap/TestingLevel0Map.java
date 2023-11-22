@@ -2,9 +2,9 @@ package TileMap;
 
 import Main.GamePanel;
 
-public class TrainingLevelMap extends TileMap{
+public class TestingLevel0Map extends TileMap{
 	
-	public TrainingLevelMap(int tileSize) {
+	public TestingLevel0Map(int tileSize) {
 		super(tileSize);
 	}
 	
@@ -28,7 +28,7 @@ public class TrainingLevelMap extends TileMap{
             {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  },
             {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  },
             {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  },
-            {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  SPK,SPK,SPK,0,  0,  0,  0,  SPK,0,  0,  0,  0,  0,  SPK,SPK,0,  0,  0,  0,  0,  0,  SPK,SPK,SPK,0,  0,  },
+            {0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  SPK,0,  0,  0,  SPK,0,  0,  0,  0,  0,  SPK,SPK,0,  0,  0,  0,  0,  0,  SPK,SPK,SPK,0,  0,  },
             {GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, GR, },
             {1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  },
         };
