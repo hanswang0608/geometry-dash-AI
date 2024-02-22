@@ -29,8 +29,8 @@ public class TrainingMode extends Mode{
 	private int trainingSpeed;
 
 	private static final int BASE_RESPAWN_DELAY = 250;
-	private static final double SPAWN_X = 320;
-	private static final double SPAWN_Y = 560;
+	private static final double SPAWN_X = 320; 
+	private static final double SPAWN_Y = 560; 
 
 	private static final int AI_VIEW_DISTANCE = 5;
 	private static final int POPULATION_SIZE = 50;
