@@ -1,4 +1,4 @@
-# GeometryDashAI
+# Geometry Dash AI
 Author: Hans Wang<br>
 Date: 2023-11-09<br>
 
